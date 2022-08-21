@@ -1,12 +1,13 @@
 import p5 from 'p5'
 import Food from './food'
 import Creature from './creature'
-import { Optional } from './utilities'
 
 class World {
+  private static readonly MAX_FOOD: number = 50
+
   sketch: p5
   food: Food[]
-  foodTimer: Optional<number> = Optional.None()
+  foodTimer: number | null
   creatures: Creature[]
 
   constructor(sketch: p5) {
@@ -16,30 +17,18 @@ class World {
   }
 
   initFood(): void {
-    for (let i = 0; i < 50; i++) {
-      this.growFood()
+    for (let i = 0; i < World.MAX_FOOD; i++) {
+      const f = new Food(this.sketch)
+      this.food.push(f)
     }
   }
 
   growFood(): void {
-    const pos = this.sketch.createVector(
-      this.sketch.random(this.sketch.width),
-      this.sketch.random(this.sketch.height)
-    )
-    const f = new Food(this.sketch, pos)
-    this.food.push(f)
-  }
+    const f = this.food.find((f) => f.eaten)
 
-  eatFood(food: Food): void {
-    const index = this.food.indexOf(food)
-
-    if (index < 0) {
-      return
+    if (f !== undefined) {
+      f.reset()
     }
-
-    this.food.splice(index, 1)
-
-    food.eaten = true
   }
 
   kill(creature: Creature): void {
@@ -71,16 +60,14 @@ class World {
   update(): void {
     this.creatures.forEach((c) => c.update())
 
-    if (this.foodTimer.HasValue) {
+    if (this.foodTimer !== null) {
       return
     }
 
-    this.foodTimer = Optional.Of(
-      window.setTimeout(() => {
-        this.foodTimer = Optional.None()
-        this.growFood()
-      }, this.sketch.randomGaussian(5) * 500)
-    )
+    this.foodTimer = window.setTimeout(() => {
+      this.foodTimer = null
+      this.growFood()
+    }, this.sketch.randomGaussian(5) * 500)
   }
 }
 

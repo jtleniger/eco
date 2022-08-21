@@ -2,7 +2,6 @@ import p5 from 'p5'
 import Food from './food'
 import Sprite from './sprite'
 import World from './world'
-import { Optional } from './utilities'
 
 class Creature extends Sprite {
   private static readonly FOOD_SEARCH_RADIUS = 256
@@ -20,19 +19,31 @@ class Creature extends Sprite {
   }
 
   world: World
-  food: Optional<Food> = Optional.None()
-  potentialMate: Optional<Creature> = Optional.None()
+  nearbyFood: Food | null
+  nearbyMate: Creature | null
   fed: number
   direction: p5.Vector
-  restingTimer: Optional<number> = Optional.None()
-  hungerTimer: Optional<number> = Optional.None()
-  unavailableTimer: Optional<number> = Optional.None()
-  state: Set<number> = new Set()
+  restingTimer: number | null
+  hungerTimer: number | null
+  unavailableTimer: number | null
+  state: Set<number>
 
   constructor(sketch: p5, world: World, pos: p5.Vector) {
     super(sketch, pos)
     this.world = world
+    this.reset()
+  }
+
+  reset(): void {
+    this.state = new Set()
+    this.unavailableTimer = null
+    this.nearbyFood = null
+    this.nearbyMate = null
     this.fed = 5
+    this.setRandomDirection()
+    this.restingTimer = null
+    this.hungerTimer = null
+    this.unavailableTimer = null
   }
 
   update(): void {
@@ -71,16 +82,20 @@ class Creature extends Sprite {
   }
 
   forage(): void {
-    if (this.state.has(Creature.STATES.Foraging) && this.food.HasValue) {
+    if (this.state.has(Creature.STATES.Foraging) && this.nearbyFood !== null) {
       this.tryEat()
       return
     }
 
-    this.nearbyFood().IfHasValue((f: Food) => {
-      this.state.add(Creature.STATES.Foraging)
-      this.food = Optional.Of(f)
-      this.setFoodDirection()
-    })
+    const maybeFood = this.nearestFood()
+
+    if (maybeFood === null) {
+      return
+    }
+
+    this.state.add(Creature.STATES.Foraging)
+    this.nearbyFood = maybeFood
+    this.setFoodDirection()
   }
 
   mate(): void {
@@ -88,29 +103,31 @@ class Creature extends Sprite {
       return
     }
 
-    if (this.state.has(Creature.STATES.Mating) && this.potentialMate.HasValue) {
+    if (this.state.has(Creature.STATES.Mating) && this.nearbyMate !== null) {
       this.tryMate()
       return
     }
 
-    this.nearbyMate().IfHasValue((c: Creature) => {
-      this.state.add(Creature.STATES.Mating)
-      this.potentialMate = Optional.Of(c)
-      this.endForage()
-    })
-  }
+    const maybeMate = this.nearestMate()
 
-  hunger(): void {
-    if (this.hungerTimer.HasValue) {
+    if (maybeMate === null) {
       return
     }
 
-    this.hungerTimer = Optional.Of(
-      window.setTimeout(() => {
-        this.fed = this.sketch.constrain(this.fed - 1, 0, 10)
-        this.hungerTimer = Optional.None()
-      }, 15000)
-    )
+    this.state.add(Creature.STATES.Mating)
+    this.nearbyMate = maybeMate
+    this.endForage()
+  }
+
+  hunger(): void {
+    if (this.hungerTimer !== null) {
+      return
+    }
+
+    this.hungerTimer = window.setTimeout(() => {
+      this.fed = this.sketch.constrain(this.fed - 1, 0, 10)
+      this.hungerTimer = null
+    }, 15000)
   }
 
   health(): void {
@@ -121,13 +138,13 @@ class Creature extends Sprite {
     if (this.fed < 7) {
       this.state.delete(Creature.STATES.Mating)
       this.state.delete(Creature.STATES.Available)
-    } else if (this.unavailableTimer.IsEmpty) {
+    } else if (this.unavailableTimer === null) {
       this.state.add(Creature.STATES.Available)
     }
   }
 
   move(): void {
-    if (this.restingTimer.HasValue) {
+    if (this.restingTimer !== null) {
       return
     }
 
@@ -149,11 +166,15 @@ class Creature extends Sprite {
   /*
    * HELPER METHODS
    */
-  nearbyFood(): Optional<Food> {
-    let minDistance: number = Infinity
-    let food: Optional<Food> = Optional.None()
+  nearestFood(): Food | null {
+    let minDistance = Infinity
+    let food = null
 
     this.world.food.forEach((f) => {
+      if (f.eaten) {
+        return
+      }
+
       const distance = f.pos.dist(this.pos)
 
       if (distance > Creature.FOOD_SEARCH_RADIUS) {
@@ -162,16 +183,16 @@ class Creature extends Sprite {
 
       if (distance < minDistance) {
         minDistance = distance
-        food = Optional.Of(f)
+        food = f
       }
     })
 
     return food
   }
 
-  nearbyMate(): Optional<Creature> {
-    let minDistance: number = Infinity
-    let creature: Optional<Creature> = Optional.None()
+  nearestMate(): Creature | null {
+    let minDistance = Infinity
+    let creature = null
 
     this.world.creatures.forEach((c) => {
       if (c === this) {
@@ -190,7 +211,7 @@ class Creature extends Sprite {
 
       if (distance < minDistance) {
         minDistance = distance
-        creature = Optional.Of(c)
+        creature = c
       }
     })
 
@@ -202,29 +223,35 @@ class Creature extends Sprite {
   }
 
   setFoodDirection(): void {
-    this.food.IfHasValue((f: Food) => {
-      this.direction = f.pos.copy().sub(this.pos).normalize()
-    })
+    if (this.nearbyFood === null) {
+      return
+    }
+
+    this.direction = this.nearbyFood.pos.copy().sub(this.pos).normalize()
   }
 
   setMateDirection(): void {
-    this.potentialMate.IfHasValue((c: Creature) => {
-      this.direction = c.pos.copy().sub(this.pos).normalize()
-    })
+    if (this.nearbyMate === null) {
+      return
+    }
+
+    this.direction = this.nearbyMate.pos.copy().sub(this.pos).normalize()
   }
 
   tryEat(): void {
-    const f = this.food.Value
+    if (this.nearbyFood === null) {
+      return
+    }
 
-    if (f.eaten) {
+    if (this.nearbyFood.eaten) {
       this.endForage()
       return
     }
 
-    const dist = this.pos.dist(f.pos)
+    const dist = this.pos.dist(this.nearbyFood.pos)
 
     if (dist < this.img.width) {
-      this.world.eatFood(f)
+      this.nearbyFood.eaten = true
       this.fed = this.sketch.constrain(this.fed + 1, 0, 10)
       this.clearHungerTimer()
       this.endForage()
@@ -232,36 +259,34 @@ class Creature extends Sprite {
   }
 
   tryMate(): void {
-    const m = this.potentialMate.Value
+    if (this.nearbyMate === null) {
+      return
+    }
+
+    const m = this.nearbyMate
 
     const dist = this.pos.dist(m.pos)
 
     if (dist < this.img.width) {
-      console.log('mate')
-
-      this.potentialMate = Optional.None()
-
       this.state.delete(Creature.STATES.Mating)
       this.state.delete(Creature.STATES.Available)
       m.state.delete(Creature.STATES.Mating)
       m.state.delete(Creature.STATES.Available)
 
-      this.unavailableTimer = Optional.Of(
-        window.setTimeout(() => {
-          this.unavailableTimer = Optional.None()
-        }, 10000)
-      )
+      this.unavailableTimer = window.setTimeout(() => {
+        this.unavailableTimer = null
+      }, 10000)
 
-      m.unavailableTimer = Optional.Of(
-        window.setTimeout(() => {
-          m.unavailableTimer = Optional.None()
-        }, 10000)
-      )
+      m.unavailableTimer = window.setTimeout(() => {
+        m.unavailableTimer = null
+      }, 10000)
 
       this.startRest()
       m.startRest()
 
       this.world.addCreature(this.pos.copy())
+
+      this.nearbyMate = null
 
       return
     }
@@ -270,28 +295,30 @@ class Creature extends Sprite {
   }
 
   endForage(): void {
-    this.food = Optional.None()
+    this.nearbyFood = null
     this.state.delete(Creature.STATES.Foraging)
     this.startRest()
   }
 
   clearHungerTimer(): void {
-    window.clearTimeout(this.hungerTimer.Value)
-    this.hungerTimer = Optional.None()
+    if (this.hungerTimer === null) {
+      return
+    }
+
+    window.clearTimeout(this.hungerTimer)
+    this.hungerTimer = null
   }
 
   startRest(): void {
     this.state.add(Creature.STATES.Resting)
 
-    this.restingTimer = Optional.Of(
-      window.setTimeout(() => {
-        this.endRest()
-      }, this.sketch.randomGaussian(5) * 500)
-    )
+    this.restingTimer = window.setTimeout(() => {
+      this.endRest()
+    }, this.sketch.randomGaussian(5) * 500)
   }
 
   endRest(): void {
-    this.restingTimer = Optional.None()
+    this.restingTimer = null
     this.state.delete(Creature.STATES.Resting)
 
     if (!this.state.has(Creature.STATES.Foraging) && !this.state.has(Creature.STATES.Mating)) {
