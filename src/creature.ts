@@ -2,15 +2,17 @@ import p5 from 'p5'
 import Food from './food'
 import Sprite from './sprite'
 import World from './world'
+import { Optional } from './utilities'
 
 class Creature extends Sprite {
+  static readonly FOOD_SEARCH_RADIUS = 128
   get imgPath (): string { return 'assets/creature.png' }
   world: World
-  food: Food | null = null
+  food: Optional<Food> = Optional.None()
   fed: number
   direction: p5.Vector
-  restingTimer: number | null = null
-  hungerTimer: number | null = null
+  restingTimer: Optional<number> = Optional.None()
+  hungerTimer: Optional<number> = Optional.None()
 
   constructor (sketch: p5, world: World, pos: p5.Vector) {
     super(sketch, pos)
@@ -24,49 +26,63 @@ class Creature extends Sprite {
   }
 
   startRest (): void {
-    this.restingTimer = window.setTimeout(() => {
-      this.restingTimer = null
+    this.restingTimer = Optional.Of(window.setTimeout(() => {
+      this.restingTimer = Optional.None()
       this.setRandomDirection()
-    }, this.sketch.randomGaussian(5) * 500)
+    }, this.sketch.randomGaussian(5) * 500))
   }
 
   checkFood (): void {
-    if (this.food != null) {
-      if (this.food.eaten) {
-        this.food = null
+    if (this.food.HasValue) {
+      const f = this.food.Value
+
+      if (f.eaten) {
+        this.food = Optional.None()
         return
       }
 
-      const dist = this.pos.dist(this.food.pos)
+      const dist = this.pos.dist(f.pos)
 
       if (dist < this.img.width) {
-        this.world.eatFood(this.food)
+        this.world.eatFood(f)
 
-        this.food = null
+        this.food = Optional.None()
 
-        const timerId = this.hungerTimer as number
+        window.clearTimeout(this.hungerTimer.Value)
 
-        window.clearTimeout(timerId)
-
-        this.hungerTimer = null
+        this.hungerTimer = Optional.None()
 
         this.fed = this.sketch.constrain(this.fed + 1, 0, 10)
         this.startRest()
       }
+
+      return
     }
 
-    // let minDistance = Infinity
+    this.lookForFood().Map((f: Food) => {
+      this.food = Optional.Of(f)
+      this.direction = f.pos.copy().sub(this.pos).normalize()
+    })
+  }
 
-    // cell.forEach(f => {
-    //   const distance = this.pos.dist(f.pos)
+  lookForFood (): Optional<Food> {
+    let minDistance: number = Infinity
+    let food: Optional<Food> = Optional.None()
 
-    //   if (distance < minDistance) {
-    //     minDistance = distance
-    //     this.food = f
-    //   }
-    // })
+    this.world.food.forEach(f => {
+      const distance = f.pos.dist(this.pos)
 
-    // this.direction = this.food.pos.copy().sub(this.pos).normalize()
+      if (distance > Creature.FOOD_SEARCH_RADIUS) {
+        return
+      }
+
+      if (distance < minDistance) {
+        minDistance = distance
+        food = Optional.Of(f)
+      }
+    })
+
+    return food
   }
 
   hunger (): void {
@@ -74,18 +90,18 @@ class Creature extends Sprite {
       this.world.kill(this)
     }
 
-    if (this.hungerTimer !== null) {
+    if (this.hungerTimer.HasValue) {
       return
     }
 
-    this.hungerTimer = window.setTimeout(() => {
+    this.hungerTimer = Optional.Of(window.setTimeout(() => {
       this.fed = this.sketch.constrain(this.fed - 1, 0, 10)
-      this.hungerTimer = null
-    }, 15000)
+      this.hungerTimer = Optional.None()
+    }, 15000))
   }
 
   update (): void {
-    if (this.restingTimer !== null) {
+    if (this.restingTimer.HasValue) {
       return
     }
 
@@ -93,7 +109,7 @@ class Creature extends Sprite {
       this.direction.rotate(this.sketch.radians(180))
     }
 
-    if ((this.food == null) && this.sketch.randomGaussian() > 2.2) {
+    if (this.food.IsEmpty && this.sketch.randomGaussian() > 2.2) {
       this.startRest()
     }
 

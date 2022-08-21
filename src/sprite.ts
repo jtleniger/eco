@@ -14,7 +14,6 @@ abstract class Sprite {
 
   private loadImage (): void {
     if (this.img === null || this.img === undefined) {
-      console.log(this.imgPath)
       this.img = this.sketch.loadImage(this.imgPath, undefined, (e: Event) => {
         console.dir(e)
       })
