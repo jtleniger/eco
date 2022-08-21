@@ -23,9 +23,3 @@ new p5((sketch: p5): void => {
     world.update()
   }
 })
-
-// function draw () {
-//   background('#9a6348')
-//   world.draw()
-//   world.update()
-// }

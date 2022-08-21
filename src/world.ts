@@ -79,7 +79,7 @@ class World {
       window.setTimeout(() => {
         this.foodTimer = Optional.None()
         this.growFood()
-      }, this.sketch.randomGaussian(5) * 1000)
+      }, this.sketch.randomGaussian(5) * 500)
     )
   }
 }

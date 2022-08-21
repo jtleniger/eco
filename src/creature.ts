@@ -5,8 +5,8 @@ import World from './world'
 import { Optional } from './utilities'
 
 class Creature extends Sprite {
-  private static readonly FOOD_SEARCH_RADIUS = 128
-  private static readonly MATE_SEARCH_RADIUS = 128
+  private static readonly FOOD_SEARCH_RADIUS = 256
+  private static readonly MATE_SEARCH_RADIUS = 256
 
   private static readonly STATES = {
     Foraging: 0,
@@ -217,7 +217,7 @@ class Creature extends Sprite {
     const f = this.food.Value
 
     if (f.eaten) {
-      this.food = Optional.None()
+      this.endForage()
       return
     }
 
@@ -272,6 +272,7 @@ class Creature extends Sprite {
   endForage(): void {
     this.food = Optional.None()
     this.state.delete(Creature.STATES.Foraging)
+    this.startRest()
   }
 
   clearHungerTimer(): void {
