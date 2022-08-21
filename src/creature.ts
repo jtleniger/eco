@@ -44,6 +44,7 @@ class Creature extends Sprite {
     this.restingTimer = null
     this.hungerTimer = null
     this.unavailableTimer = null
+    this.startRest()
   }
 
   update(): void {
@@ -144,7 +145,7 @@ class Creature extends Sprite {
   }
 
   move(): void {
-    if (this.restingTimer !== null) {
+    if (this.state.has(Creature.STATES.Resting)) {
       return
     }
 
@@ -263,14 +264,17 @@ class Creature extends Sprite {
       return
     }
 
+    if (!this.nearbyMate.state.has(Creature.STATES.Available)) {
+      this.endMate()
+      return
+    }
+
     const m = this.nearbyMate
 
     const dist = this.pos.dist(m.pos)
 
     if (dist < this.img.width) {
-      this.state.delete(Creature.STATES.Mating)
       this.state.delete(Creature.STATES.Available)
-      m.state.delete(Creature.STATES.Mating)
       m.state.delete(Creature.STATES.Available)
 
       this.unavailableTimer = window.setTimeout(() => {
@@ -281,17 +285,21 @@ class Creature extends Sprite {
         m.unavailableTimer = null
       }, 10000)
 
-      this.startRest()
-      m.startRest()
+      this.endMate()
+      m.endMate()
 
       this.world.addCreature(this.pos.copy())
-
-      this.nearbyMate = null
 
       return
     }
 
     this.setMateDirection()
+  }
+
+  endMate(): void {
+    this.nearbyMate = null
+    this.state.delete(Creature.STATES.Mating)
+    this.startRest()
   }
 
   endForage(): void {

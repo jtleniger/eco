@@ -7,7 +7,7 @@ class World {
 
   sketch: p5
   food: Food[]
-  foodTimer: number | null
+  foodTimer: number | null = null
   creatures: Creature[]
 
   constructor(sketch: p5) {

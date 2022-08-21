@@ -11,10 +11,12 @@ module.exports = {
         test: /\.tsx?$/,
         use: 'ts-loader',
         exclude: /node_modules/,
+        include: path.resolve(__dirname, 'src'),
       },
       {
         test: /\.css$/i,
         use: ['style-loader', 'css-loader'],
+        include: path.resolve(__dirname, 'src/style.css'),
       },
     ],
   },
