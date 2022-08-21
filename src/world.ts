@@ -1,17 +1,17 @@
 import p5 from 'p5'
 import Food from './food'
 import Creature from './creature'
+import { Optional } from './utilities'
 
 class World {
   sketch: p5
   food: Food[]
-  foodTimer: number | null
+  foodTimer: Optional<number> = Optional.None()
   creatures: Creature[]
 
   constructor(sketch: p5) {
     this.food = []
     this.creatures = []
-    this.foodTimer = null
     this.sketch = sketch
   }
 
@@ -54,8 +54,13 @@ class World {
         this.sketch.random(this.sketch.width),
         this.sketch.random(this.sketch.height)
       )
-      this.creatures.push(new Creature(this.sketch, this, pos))
+
+      this.addCreature(pos)
     }
+  }
+
+  addCreature(pos: p5.Vector): void {
+    this.creatures.push(new Creature(this.sketch, this, pos))
   }
 
   draw(): void {
@@ -66,14 +71,16 @@ class World {
   update(): void {
     this.creatures.forEach((c) => c.update())
 
-    if (this.foodTimer === null) {
+    if (this.foodTimer.HasValue) {
       return
     }
 
-    this.foodTimer = window.setTimeout(() => {
-      this.foodTimer = null
-      this.growFood()
-    }, this.sketch.randomGaussian(5) * 1000)
+    this.foodTimer = Optional.Of(
+      window.setTimeout(() => {
+        this.foodTimer = Optional.None()
+        this.growFood()
+      }, this.sketch.randomGaussian(5) * 1000)
+    )
   }
 }
 

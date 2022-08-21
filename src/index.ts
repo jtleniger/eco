@@ -2,6 +2,8 @@ import p5 from 'p5'
 
 import World from './world'
 
+import './style.css'
+
 // eslint-disable-next-line new-cap, no-new
 new p5((sketch: p5): void => {
   let world: World
