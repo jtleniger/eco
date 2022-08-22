@@ -61,13 +61,15 @@ class Mates implements Behavior {
 
   beforeDraw = (sketch: p5): void => {
     if (this.state.has(State.Mating)) {
-      sketch.tint(255, 180, 180)
+      sketch.stroke('#d26471')
+      sketch.strokeWeight(4)
+      sketch.point(this.pos.x, this.pos.y - 20)
+      sketch.point(this.pos.x - 2, this.pos.y - 22)
+      sketch.point(this.pos.x + 2, this.pos.y - 22)
     }
   }
 
-  afterDraw = (sketch: p5): void => {
-    sketch.noTint()
-  }
+  afterDraw = (sketch: p5): void => {}
 
   private tryMate(): void {
     if (this.nearbyMate === null) {
