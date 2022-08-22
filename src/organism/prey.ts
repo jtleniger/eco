@@ -7,8 +7,9 @@ import World from '../world'
 import DNA from './genes/dna'
 import Eats from './traits/eats'
 import Mates from './traits/mates'
+import Organism from './organism'
 
-class Prey extends Sprite {
+class Prey extends Sprite implements Organism {
   get imgPath(): string {
     return 'assets/creature.png'
   }

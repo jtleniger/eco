@@ -1,7 +1,7 @@
 import p5 from 'p5'
 import World from '../../world'
 import Mate from '../genes/mate'
-import Prey from '../prey'
+import Organism from '../organism'
 import State from '../state'
 import Behavior from './behavior'
 
@@ -10,13 +10,13 @@ class Mates implements Behavior {
   private readonly pos: p5.Vector
   private readonly world: World
   private readonly state: Set<State>
-  private readonly organism: Prey
+  private readonly organism: Organism
 
   private _direction: p5.Vector | null
-  private nearbyMate: Prey | null = null
+  private nearbyMate: Organism | null = null
   private cooldown: number
 
-  constructor(gene: Mate, organism: Prey, world: World) {
+  constructor(gene: Mate, organism: Organism, world: World) {
     this.gene = gene
     this.pos = organism.pos
     this._direction = null
@@ -99,7 +99,7 @@ class Mates implements Behavior {
     this._direction = this.nearbyMate.pos.copy().sub(this.pos).normalize()
   }
 
-  private nearestMate(): Prey | null {
+  private nearestMate(): Organism | null {
     let minDistance = Infinity
     let creature = null
 
