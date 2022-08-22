@@ -1,7 +1,7 @@
 interface Mate {
   searchRange: number
   mateRange: number
-  ready: number
+  cooldown: number
 }
 
 export default Mate

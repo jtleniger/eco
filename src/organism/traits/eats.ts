@@ -8,36 +8,42 @@ class Eats implements Behavior {
   private readonly gene: Eat
   private readonly pos: p5.Vector
   private readonly food: Food[]
+  private readonly state: Set<State>
 
   private nearbyFood: Food | null = null
   private hunger: number = 0
   private _direction: p5.Vector | null = null
 
-  constructor(gene: Eat, pos: p5.Vector, food: Food[]) {
+  constructor(gene: Eat, pos: p5.Vector, state: Set<State>, food: Food[]) {
     this.gene = gene
     this.pos = pos
     this._direction = null
     this.food = food
+    this.state = state
   }
 
-  direction = (state: Set<State>): p5.Vector | null => {
-    if (state.has(State.Hunting) && !state.has(State.Mating) && !state.has(State.Resting)) {
+  direction = (): p5.Vector | null => {
+    if (
+      this.state.has(State.Hunting) &&
+      !this.state.has(State.Mating) &&
+      !this.state.has(State.Resting)
+    ) {
       return this._direction
     }
 
     return null
   }
 
-  update = (state: Set<State>): void => {
+  update = (): void => {
     this.hunger++
 
-    if (state.has(State.Mating)) {
-      this.end(state)
+    if (this.state.has(State.Mating)) {
+      this.end()
       return
     }
 
-    if (state.has(State.Hunting) && this.nearbyFood !== null) {
-      this.tryEat(state)
+    if (this.state.has(State.Hunting) && this.nearbyFood !== null) {
+      this.tryEat()
       return
     }
 
@@ -47,18 +53,18 @@ class Eats implements Behavior {
       return
     }
 
-    state.add(State.Hunting)
+    this.state.add(State.Hunting)
     this.nearbyFood = maybeFood
     this._direction = this.nearbyFood.pos.copy().sub(this.pos).normalize()
   }
 
-  private tryEat(state: Set<State>): void {
+  private tryEat(): void {
     if (this.nearbyFood === null) {
       return
     }
 
     if (this.nearbyFood.eaten) {
-      this.end(state)
+      this.end()
       return
     }
 
@@ -66,7 +72,7 @@ class Eats implements Behavior {
 
     if (dist < this.gene.eatRange) {
       this.eat()
-      this.end(state)
+      this.end()
     }
   }
 
@@ -107,9 +113,9 @@ class Eats implements Behavior {
     return food
   }
 
-  private end(state: Set<State>): void {
+  private end(): void {
     this.nearbyFood = null
-    state.delete(State.Hunting)
+    this.state.delete(State.Hunting)
   }
 }
 

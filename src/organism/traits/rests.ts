@@ -4,42 +4,45 @@ import State from '../state'
 import Behavior from './behavior'
 
 class Rests implements Behavior {
-  private energy: number = 0
   private readonly gene: Rest
+  private readonly state: Set<State>
+
+  private energy: number = 0
   private _direction: p5.Vector | null
 
-  constructor(gene: Rest) {
+  constructor(gene: Rest, state: Set<State>) {
     this.gene = gene
     this._direction = null
+    this.state = state
   }
 
-  direction(state: Set<State>): p5.Vector | null {
-    if (!state.has(State.Hunting)) {
+  direction(): p5.Vector | null {
+    if (!this.state.has(State.Hunting) && !this.state.has(State.Mating)) {
       return this._direction
     }
 
     return null
   }
 
-  update = (state: Set<State>): void => {
-    if (state.has(State.Resting)) {
+  update = (): void => {
+    if (this.state.has(State.Resting)) {
       return
     }
 
     this.energy--
 
     if (this.energy <= 0) {
-      state.add(State.Resting)
+      this.state.add(State.Resting)
       this._direction = null
       window.setTimeout(() => {
-        this.end(state)
+        this.end()
       }, this.gene.restDurationSec * 1000)
     }
   }
 
-  end(state: Set<State>): void {
+  end(): void {
     this.energy = this.gene.maxEnergy
-    state.delete(State.Resting)
+    this.state.delete(State.Resting)
     this._direction = p5.Vector.random2D()
   }
 }

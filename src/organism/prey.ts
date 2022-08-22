@@ -9,68 +9,57 @@ import Eats from './traits/eats'
 import Mates from './traits/mates'
 
 class Prey extends Sprite {
-  private static readonly MATE_SEARCH_RADIUS = 256
-
-  private static readonly STATES = {
-    Hunting: 0,
-    Resting: 1,
-    Mating: 2,
-    Available: 3,
-  } as const
-
   get imgPath(): string {
     return 'assets/creature.png'
   }
 
   world: World
-  nearbyMate: Prey | null
   direction: p5.Vector
-  unavailableTimer: number | null
-  state: Set<number>
-  newState: Set<State>
-  dna: DNA = DNA.Default()
+  state: Set<State> = new Set()
+  dna: DNA = DNA.Default(typeof Prey)
+  mateBehavior: Mates
 
   private readonly traits: Behavior[]
 
   constructor(sketch: p5, world: World, pos: p5.Vector) {
     super(sketch, pos)
     this.world = world
+    this.mateBehavior = new Mates(this.dna.mate, this.pos, this.state, this.world.prey)
     this.traits = [
-      new Rests(this.dna.rest),
-      new Eats(this.dna.eat, this.pos, this.world.food),
-      new Mates(this.dna.mate, this.pos, this.world.prey),
+      new Rests(this.dna.rest, this.state),
+      new Eats(this.dna.eat, this.pos, this.state, this.world.food),
+      this.mateBehavior,
     ]
     this.reset()
   }
 
   reset(): void {
-    this.state = new Set()
-    this.newState = new Set()
-    this.unavailableTimer = null
-    this.nearbyMate = null
-    this.unavailableTimer = null
+    this.state.clear()
   }
 
   update(): void {
     for (const t of this.traits) {
-      t.update(this.newState)
+      t.update(this.state)
     }
-    // this.mate()
-    // this.health()
+
     this.move()
   }
 
-  // draw(): void {
-  //   if (this.state.has(Creature.STATES.Mating)) {
-  //     const grey = this.sketch.map(this.fed, 0, 10, 0, 192)
-  //     this.sketch.tint(255, grey, grey)
-  //   } else {
-  //     this.sketch.tint(this.sketch.map(this.fed, 0, 10, 0, 255))
-  //   }
+  draw(): void {
+    for (const t of this.traits) {
+      if (t.beforeDraw !== undefined) {
+        t.beforeDraw(this.sketch)
+      }
+    }
 
-  //   super.draw()
-  //   this.sketch.noTint()
-  // }
+    super.draw()
+
+    for (const t of this.traits) {
+      if (t.afterDraw !== undefined) {
+        t.afterDraw(this.sketch)
+      }
+    }
+  }
 
   health(): void {
     // if (this.fed === 0) {
@@ -85,7 +74,7 @@ class Prey extends Sprite {
   }
 
   move(): void {
-    const dirs = this.traits.map((t) => t.direction(this.newState)).filter((d) => d !== null)
+    const dirs = this.traits.map((t) => t.direction(this.state)).filter((d) => d !== null)
 
     if (dirs.length > 1) {
       throw Error('received multiple candidate directions')

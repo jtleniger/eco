@@ -2,6 +2,7 @@ import Eat from './eat'
 import Mate from './mate'
 import Rest from './rest'
 import { RandomInt } from '../../utilities'
+import Prey from '../prey'
 
 class DNA {
   eat: Eat
@@ -14,24 +15,29 @@ class DNA {
     this.rest = rest
   }
 
-  static Default(): DNA {
-    return new DNA(
-      {
-        foodValue: 1,
-        full: 10,
-        huntRange: 256,
-        eatRange: 32,
-      },
-      {
-        searchRange: 256,
-        mateRange: 32,
-        ready: 100,
-      },
-      {
-        maxEnergy: RandomInt(100, 300),
-        restDurationSec: RandomInt(1, 7),
-      }
-    )
+  static Default(type: string): DNA {
+    switch (type) {
+      case typeof Prey:
+        return new DNA(
+          {
+            foodValue: 1,
+            full: 10,
+            huntRange: 256,
+            eatRange: 32,
+          },
+          {
+            searchRange: 256,
+            mateRange: 32,
+            cooldown: 500,
+          },
+          {
+            maxEnergy: RandomInt(100, 300),
+            restDurationSec: RandomInt(1, 7),
+          }
+        )
+      default:
+        throw Error(`${type} has no DNA default`)
+    }
   }
 }
 

@@ -8,28 +8,42 @@ class Mates implements Behavior {
   private readonly gene: Mate
   private readonly pos: p5.Vector
   private readonly potentialMates: Prey[]
+  private readonly state: Set<State>
 
   private _direction: p5.Vector | null
   private nearbyMate: Prey | null = null
+  private cooldown: number
 
-  constructor(gene: Mate, pos: p5.Vector, potentialMates: Prey[]) {
+  constructor(gene: Mate, pos: p5.Vector, state: Set<State>, potentialMates: Prey[]) {
     this.gene = gene
     this.pos = pos
     this._direction = null
     this.potentialMates = potentialMates
+    this.state = state
+    this.cooldown = this.gene.cooldown
   }
 
-  direction = (state: Set<State>): p5.Vector | null => {
-    return null
+  direction = (): p5.Vector | null => {
+    if (!this.state.has(State.Mating)) {
+      return null
+    }
+
+    return this._direction
   }
 
-  update = (state: Set<State>): void => {
-    // if (!state.has(Prey.STATES.Available)) {
-    //   return
-    // }
+  update = (): void => {
+    if (this.cooldown >= this.gene.cooldown) {
+      this.state.add(State.Available)
+    }
 
-    if (state.has(State.Mating) && this.nearbyMate !== null) {
-      this.tryMate(state)
+    if (this.state.has(State.Mating) && this.nearbyMate !== null) {
+      this.tryMate()
+      return
+    }
+
+    this.cooldown++
+
+    if (!this.state.has(State.Available)) {
       return
     }
 
@@ -39,32 +53,43 @@ class Mates implements Behavior {
       return
     }
 
-    // state.add(State.Mating)
+    this.state.add(State.Mating)
     this.nearbyMate = maybeMate
   }
 
-  private tryMate(state: Set<State>): void {
+  beforeDraw = (sketch: p5): void => {
+    if (this.state.has(State.Mating)) {
+      sketch.tint(255, 100, 100)
+    }
+  }
+
+  afterDraw = (sketch: p5): void => {
+    sketch.noTint()
+  }
+
+  private tryMate(): void {
     if (this.nearbyMate === null) {
       return
     }
 
-    // if (!this.nearbyMate.newState.has(Prey.STATES.Available)) {
-    //   this.endMate()
-    //   return
-    // }
+    if (!this.nearbyMate.state.has(State.Available)) {
+      this.end()
+      return
+    }
 
     const m = this.nearbyMate
 
     const dist = this.pos.dist(m.pos)
 
     if (dist < this.gene.mateRange) {
-      // state.delete(Prey.STATES.Available)
-      // m.state.delete(Prey.STATES.Available)
+      this.state.delete(State.Available)
+      m.state.delete(State.Available)
 
-      this.end(state)
-      // m.end()
+      this.end()
+      m.mateBehavior.end()
 
       // this.world.addCreature(this.pos.copy())
+      console.log('mate')
 
       return
     }
@@ -77,13 +102,13 @@ class Mates implements Behavior {
     let creature = null
 
     this.potentialMates.forEach((m) => {
-      // if (m === this) {
-      //   return
-      // }
+      if (m.mateBehavior === this) {
+        return
+      }
 
-      // if (!m.state.has(Prey.STATES.Available)) {
-      //   return
-      // }
+      if (!m.state.has(State.Available)) {
+        return
+      }
 
       const distance = m.pos.dist(this.pos)
 
@@ -100,9 +125,10 @@ class Mates implements Behavior {
     return creature
   }
 
-  private end(state: Set<State>): void {
+  private end(): void {
     this.nearbyMate = null
-    state.delete(State.Mating)
+    this.cooldown = 0
+    this.state.delete(State.Mating)
   }
 }
 
