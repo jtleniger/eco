@@ -1,6 +1,6 @@
 import p5 from 'p5'
 import Food from './food'
-import Creature from './creature'
+import Prey from './organism/prey'
 
 class World {
   private static readonly MAX_FOOD: number = 50
@@ -8,11 +8,11 @@ class World {
   sketch: p5
   food: Food[]
   foodTimer: number | null = null
-  creatures: Creature[]
+  prey: Prey[]
 
   constructor(sketch: p5) {
     this.food = []
-    this.creatures = []
+    this.prey = []
     this.sketch = sketch
   }
 
@@ -31,10 +31,10 @@ class World {
     }
   }
 
-  kill(creature: Creature): void {
-    const index = this.creatures.indexOf(creature)
+  kill(creature: Prey): void {
+    const index = this.prey.indexOf(creature)
 
-    this.creatures.splice(index, 1)
+    this.prey.splice(index, 1)
   }
 
   spawnCreatures(): void {
@@ -49,16 +49,16 @@ class World {
   }
 
   addCreature(pos: p5.Vector): void {
-    this.creatures.push(new Creature(this.sketch, this, pos))
+    this.prey.push(new Prey(this.sketch, this, pos))
   }
 
   draw(): void {
     this.food.forEach((f) => f.draw())
-    this.creatures.forEach((c) => c.draw())
+    this.prey.forEach((c) => c.draw())
   }
 
   update(): void {
-    this.creatures.forEach((c) => c.update())
+    this.prey.forEach((c) => c.update())
 
     if (this.foodTimer !== null) {
       return
