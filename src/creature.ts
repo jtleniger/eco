@@ -3,8 +3,9 @@ import Food from './food'
 import Sprite from './sprite'
 import State from './state'
 import Rests from './traits/rests'
-import Trait from './traits/trait'
+import Behavior from './traits/behavior'
 import World from './world'
+import DNA from './genes/dna'
 
 class Creature extends Sprite {
   private static readonly FOOD_SEARCH_RADIUS = 256
@@ -30,8 +31,9 @@ class Creature extends Sprite {
   unavailableTimer: number | null
   state: Set<number>
   newState: Set<State>
+  dna: DNA = DNA.Default()
 
-  private readonly traits: Trait[] = [new Rests(this.onRestEnd.bind(this))]
+  private readonly traits: Behavior[] = [new Rests(this.dna.rest, this.onRestEnd.bind(this))]
 
   constructor(sketch: p5, world: World, pos: p5.Vector) {
     super(sketch, pos)

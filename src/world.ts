@@ -38,7 +38,7 @@ class World {
   }
 
   spawnCreatures(): void {
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < 5; i++) {
       const pos = this.sketch.createVector(
         this.sketch.random(this.sketch.width),
         this.sketch.random(this.sketch.height)
