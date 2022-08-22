@@ -1,6 +1,9 @@
 import p5 from 'p5'
 import Food from './food'
 import Sprite from './sprite'
+import State from './state'
+import Rests from './traits/rests'
+import Trait from './traits/trait'
 import World from './world'
 
 class Creature extends Sprite {
@@ -23,10 +26,12 @@ class Creature extends Sprite {
   nearbyMate: Creature | null
   fed: number
   direction: p5.Vector
-  restingTimer: number | null
   hungerTimer: number | null
   unavailableTimer: number | null
   state: Set<number>
+  newState: Set<State>
+
+  private readonly traits: Trait[] = [new Rests(this.onRestEnd.bind(this))]
 
   constructor(sketch: p5, world: World, pos: p5.Vector) {
     super(sketch, pos)
@@ -36,22 +41,23 @@ class Creature extends Sprite {
 
   reset(): void {
     this.state = new Set()
+    this.newState = new Set()
     this.unavailableTimer = null
     this.nearbyFood = null
     this.nearbyMate = null
     this.fed = 5
     this.setRandomDirection()
-    this.restingTimer = null
     this.hungerTimer = null
     this.unavailableTimer = null
-    this.startRest()
   }
 
   update(): void {
-    this.rest()
-    this.mate()
-    this.hunt()
-    this.hunger()
+    for (const t of this.traits) {
+      t.update(this.newState)
+    }
+    // this.mate()
+    // this.hunt()
+    // this.hunger()
     this.health()
     this.move()
   }
@@ -71,11 +77,6 @@ class Creature extends Sprite {
   /*
    * STATE METHODS
    */
-  rest(): void {
-    if (this.canRest() && this.sketch.randomGaussian() > 2.2) {
-      this.startRest()
-    }
-  }
 
   hunt(): void {
     if (this.state.has(Creature.STATES.Hunting) && this.nearbyFood !== null) {
@@ -140,7 +141,7 @@ class Creature extends Sprite {
   }
 
   move(): void {
-    if (this.state.has(Creature.STATES.Resting)) {
+    if (this.newState.has(State.Resting)) {
       return
     }
 
@@ -294,13 +295,11 @@ class Creature extends Sprite {
   endMate(): void {
     this.nearbyMate = null
     this.state.delete(Creature.STATES.Mating)
-    this.startRest()
   }
 
   endForage(): void {
     this.nearbyFood = null
     this.state.delete(Creature.STATES.Hunting)
-    this.startRest()
   }
 
   clearHungerTimer(): void {
@@ -312,29 +311,10 @@ class Creature extends Sprite {
     this.hungerTimer = null
   }
 
-  startRest(): void {
-    this.state.add(Creature.STATES.Resting)
-
-    this.restingTimer = window.setTimeout(() => {
-      this.endRest()
-    }, this.sketch.randomGaussian(5) * 500)
-  }
-
-  endRest(): void {
-    this.restingTimer = null
-    this.state.delete(Creature.STATES.Resting)
-
+  onRestEnd(): void {
     if (!this.state.has(Creature.STATES.Hunting) && !this.state.has(Creature.STATES.Mating)) {
       this.setRandomDirection()
     }
-  }
-
-  canRest(): boolean {
-    return (
-      !this.state.has(Creature.STATES.Resting) &&
-      !this.state.has(Creature.STATES.Mating) &&
-      !this.state.has(Creature.STATES.Hunting)
-    )
   }
 }
 
