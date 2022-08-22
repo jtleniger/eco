@@ -24,7 +24,7 @@ class Prey extends Sprite {
   constructor(sketch: p5, world: World, pos: p5.Vector) {
     super(sketch, pos)
     this.world = world
-    this.mateBehavior = new Mates(this.dna.mate, this.pos, this.state, this.world.prey)
+    this.mateBehavior = new Mates(this.dna.mate, this.pos, this.state, this.world)
     this.traits = [
       new Rests(this.dna.rest, this.state),
       new Eats(this.dna.eat, this.pos, this.state, this.world.food),

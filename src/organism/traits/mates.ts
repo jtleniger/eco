@@ -1,4 +1,5 @@
 import p5 from 'p5'
+import World from '../../world'
 import Mate from '../genes/mate'
 import Prey from '../prey'
 import State from '../state'
@@ -7,20 +8,20 @@ import Behavior from './behavior'
 class Mates implements Behavior {
   private readonly gene: Mate
   private readonly pos: p5.Vector
-  private readonly potentialMates: Prey[]
+  private readonly world: World
   private readonly state: Set<State>
 
   private _direction: p5.Vector | null
   private nearbyMate: Prey | null = null
   private cooldown: number
 
-  constructor(gene: Mate, pos: p5.Vector, state: Set<State>, potentialMates: Prey[]) {
+  constructor(gene: Mate, pos: p5.Vector, state: Set<State>, world: World) {
     this.gene = gene
     this.pos = pos
     this._direction = null
-    this.potentialMates = potentialMates
+    this.world = world
     this.state = state
-    this.cooldown = this.gene.cooldown
+    this.cooldown = 0
   }
 
   direction = (): p5.Vector | null => {
@@ -59,7 +60,7 @@ class Mates implements Behavior {
 
   beforeDraw = (sketch: p5): void => {
     if (this.state.has(State.Mating)) {
-      sketch.tint(255, 100, 100)
+      sketch.tint(255, 180, 180)
     }
   }
 
@@ -88,8 +89,7 @@ class Mates implements Behavior {
       this.end()
       m.mateBehavior.end()
 
-      // this.world.addCreature(this.pos.copy())
-      console.log('mate')
+      this.world.addCreature(this.pos.copy())
 
       return
     }
@@ -101,7 +101,7 @@ class Mates implements Behavior {
     let minDistance = Infinity
     let creature = null
 
-    this.potentialMates.forEach((m) => {
+    this.world.prey.forEach((m) => {
       if (m.mateBehavior === this) {
         return
       }
