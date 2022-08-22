@@ -21,10 +21,15 @@ class Prey extends Sprite {
 
   private readonly traits: Behavior[]
 
-  constructor(sketch: p5, world: World, pos: p5.Vector) {
+  constructor(sketch: p5, world: World, pos: p5.Vector, dna?: DNA) {
     super(sketch, pos)
     this.world = world
-    this.mateBehavior = new Mates(this.dna.mate, this.pos, this.state, this.world)
+
+    if (dna !== undefined) {
+      this.dna = dna
+    }
+
+    this.mateBehavior = new Mates(this.dna.mate, this, this.world)
     this.traits = [
       new Rests(this.dna.rest, this.state),
       new Eats(this.dna.eat, this.pos, this.state, this.world.food),

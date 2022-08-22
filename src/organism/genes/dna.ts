@@ -9,10 +9,18 @@ class DNA {
   mate: Mate
   rest: Rest
 
-  constructor(eat: Eat, mating: Mate, rest: Rest) {
+  constructor(eat: Eat, mate: Mate, rest: Rest) {
     this.eat = eat
-    this.mate = mating
+    this.mate = mate
     this.rest = rest
+  }
+
+  mix(other: DNA): DNA {
+    return new DNA(
+      structuredClone(this.eat),
+      structuredClone(this.mate),
+      structuredClone(this.rest)
+    )
   }
 
   static Default(type: string): DNA {

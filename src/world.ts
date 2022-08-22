@@ -1,5 +1,6 @@
 import p5 from 'p5'
 import Food from './food'
+import DNA from './organism/genes/dna'
 import Prey from './organism/prey'
 
 class World {
@@ -48,7 +49,7 @@ class World {
     }
   }
 
-  addCreature(pos: p5.Vector): void {
+  addCreature(pos: p5.Vector, dna?: DNA): void {
     this.prey.push(new Prey(this.sketch, this, pos))
   }
 

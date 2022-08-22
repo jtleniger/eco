@@ -10,18 +10,20 @@ class Mates implements Behavior {
   private readonly pos: p5.Vector
   private readonly world: World
   private readonly state: Set<State>
+  private readonly organism: Prey
 
   private _direction: p5.Vector | null
   private nearbyMate: Prey | null = null
   private cooldown: number
 
-  constructor(gene: Mate, pos: p5.Vector, state: Set<State>, world: World) {
+  constructor(gene: Mate, organism: Prey, world: World) {
     this.gene = gene
-    this.pos = pos
+    this.pos = organism.pos
     this._direction = null
     this.world = world
-    this.state = state
+    this.state = organism.state
     this.cooldown = 0
+    this.organism = organism
   }
 
   direction = (): p5.Vector | null => {
@@ -89,7 +91,7 @@ class Mates implements Behavior {
       this.end()
       m.mateBehavior.end()
 
-      this.world.addCreature(this.pos.copy())
+      this.world.addCreature(this.pos.copy(), this.organism.dna.mix(m.dna))
 
       return
     }
