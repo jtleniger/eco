@@ -8,7 +8,7 @@ class Creature extends Sprite {
   private static readonly MATE_SEARCH_RADIUS = 256
 
   private static readonly STATES = {
-    Foraging: 0,
+    Hunting: 0,
     Resting: 1,
     Mating: 2,
     Available: 3,
@@ -50,7 +50,7 @@ class Creature extends Sprite {
   update(): void {
     this.rest()
     this.mate()
-    this.forage()
+    this.hunt()
     this.hunger()
     this.health()
     this.move()
@@ -72,18 +72,13 @@ class Creature extends Sprite {
    * STATE METHODS
    */
   rest(): void {
-    if (
-      !this.state.has(Creature.STATES.Resting) &&
-      !this.state.has(Creature.STATES.Mating) &&
-      !this.state.has(Creature.STATES.Foraging) &&
-      this.sketch.randomGaussian() > 2.2
-    ) {
+    if (this.canRest() && this.sketch.randomGaussian() > 2.2) {
       this.startRest()
     }
   }
 
-  forage(): void {
-    if (this.state.has(Creature.STATES.Foraging) && this.nearbyFood !== null) {
+  hunt(): void {
+    if (this.state.has(Creature.STATES.Hunting) && this.nearbyFood !== null) {
       this.tryEat()
       return
     }
@@ -94,7 +89,7 @@ class Creature extends Sprite {
       return
     }
 
-    this.state.add(Creature.STATES.Foraging)
+    this.state.add(Creature.STATES.Hunting)
     this.nearbyFood = maybeFood
     this.setFoodDirection()
   }
@@ -304,7 +299,7 @@ class Creature extends Sprite {
 
   endForage(): void {
     this.nearbyFood = null
-    this.state.delete(Creature.STATES.Foraging)
+    this.state.delete(Creature.STATES.Hunting)
     this.startRest()
   }
 
@@ -329,9 +324,17 @@ class Creature extends Sprite {
     this.restingTimer = null
     this.state.delete(Creature.STATES.Resting)
 
-    if (!this.state.has(Creature.STATES.Foraging) && !this.state.has(Creature.STATES.Mating)) {
+    if (!this.state.has(Creature.STATES.Hunting) && !this.state.has(Creature.STATES.Mating)) {
       this.setRandomDirection()
     }
+  }
+
+  canRest(): boolean {
+    return (
+      !this.state.has(Creature.STATES.Resting) &&
+      !this.state.has(Creature.STATES.Mating) &&
+      !this.state.has(Creature.STATES.Hunting)
+    )
   }
 }
 
