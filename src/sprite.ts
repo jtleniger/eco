@@ -1,7 +1,7 @@
 import p5 from 'p5'
 
 abstract class Sprite {
-  img: p5.Image
+  img: p5.Image | null = null
   sketch: p5
   pos: p5.Vector
   abstract get imgPath(): string
@@ -21,6 +21,10 @@ abstract class Sprite {
   }
 
   draw(): void {
+    if (this.img === null) {
+      return
+    }
+
     const x = this.pos.x - this.img.width
     const y = this.pos.y - this.img.height
     const width = this.img.width * 2

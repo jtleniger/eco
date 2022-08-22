@@ -15,10 +15,11 @@ class Prey extends Sprite implements Organism {
   }
 
   world: World
-  direction: p5.Vector
   state: Set<State> = new Set()
   dna: DNA = DNA.Default(typeof Prey)
   mateBehavior: Mates
+  restBehavior: Rests
+  eatBehavior: Eats
 
   private readonly traits: Behavior[]
 
@@ -30,13 +31,10 @@ class Prey extends Sprite implements Organism {
       this.dna = dna
     }
 
+    this.restBehavior = new Rests(this.dna.rest, this.state)
+    this.eatBehavior = new Eats(this.dna.eat, this.pos, this.state, this.world.food)
     this.mateBehavior = new Mates(this.dna.mate, this, this.world)
-    this.traits = [
-      new Rests(this.dna.rest, this.state),
-      new Eats(this.dna.eat, this.pos, this.state, this.world.food),
-      this.mateBehavior,
-    ]
-    this.reset()
+    this.traits = [this.restBehavior, this.eatBehavior, this.mateBehavior]
   }
 
   reset(): void {
@@ -86,13 +84,11 @@ class Prey extends Sprite implements Organism {
       throw Error('received multiple candidate directions')
     }
 
-    const dir = dirs[0]
-
-    if (dir === null || dir === undefined) {
+    if (dirs.length === 0 || dirs[0] === null || dirs[0] === undefined) {
       return
     }
 
-    this.direction = dir
+    const direction = dirs[0].copy()
 
     if (
       this.pos.x >= this.sketch.width ||
@@ -100,10 +96,10 @@ class Prey extends Sprite implements Organism {
       this.pos.y >= this.sketch.height ||
       this.pos.y <= 0
     ) {
-      this.direction.rotate(this.sketch.radians(180))
+      direction.rotate(this.sketch.radians(180))
     }
 
-    this.pos.add(this.direction)
+    this.pos.add(direction)
 
     this.pos.x = this.sketch.constrain(this.pos.x, 0, this.sketch.width)
     this.pos.y = this.sketch.constrain(this.pos.y, 0, this.sketch.height)

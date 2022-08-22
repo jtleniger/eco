@@ -9,6 +9,7 @@ class Rests implements Behavior {
 
   private energy: number = 0
   private _direction: p5.Vector | null
+  private timeout: number | null = null
 
   constructor(gene: Rest, state: Set<State>) {
     this.gene = gene
@@ -32,12 +33,20 @@ class Rests implements Behavior {
     this.energy--
 
     if (this.energy <= 0) {
-      this.state.add(State.Resting)
-      this._direction = null
-      window.setTimeout(() => {
-        this.end()
-      }, this.gene.restDurationSec * 1000)
+      this.start()
     }
+  }
+
+  start(): void {
+    if (this.timeout !== null) {
+      window.clearTimeout(this.timeout)
+    }
+
+    this.state.add(State.Resting)
+    this._direction = null
+    this.timeout = window.setTimeout(() => {
+      this.end()
+    }, this.gene.restDurationSec * 1000)
   }
 
   end(): void {

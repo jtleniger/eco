@@ -11,7 +11,6 @@ class Mates implements Behavior {
   private readonly world: World
   private readonly state: Set<State>
   private readonly organism: Organism
-
   private _direction: p5.Vector | null
   private nearbyMate: Organism | null = null
   private cooldown: number
@@ -90,6 +89,8 @@ class Mates implements Behavior {
 
       this.end()
       m.mateBehavior.end()
+      this.organism.restBehavior.start()
+      m.restBehavior.start()
 
       this.world.addCreature(this.pos.copy(), this.organism.dna.mix(m.dna))
 
