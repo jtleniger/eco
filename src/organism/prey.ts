@@ -20,21 +20,29 @@ class Prey extends Sprite implements Organism {
 
   world: World
   state: Set<State> = new Set()
-  dna: DNA = DNA.Default(typeof Prey)
+  dna: DNA
   health: Health
   mates: Mates
   rests: Rests
   eats: Eats
 
+  readonly generation: number = 1
+
   private readonly drives: Drive[]
 
-  constructor(sketch: p5, world: World, pos: p5.Vector, dna?: DNA) {
+  constructor(sketch: p5, world: World, pos: p5.Vector, dna?: DNA, generation?: number) {
     super(sketch, pos)
     this.world = world
 
-    // if (dna !== undefined) {
-    //   this.dna = dna
-    // }
+    if (dna !== undefined) {
+      this.dna = dna
+    } else {
+      this.dna = DNA.Default(typeof Prey, this.world)
+    }
+
+    if (generation !== undefined) {
+      this.generation = generation
+    }
 
     this.health = new Health(this)
 
@@ -59,8 +67,8 @@ class Prey extends Sprite implements Organism {
     this.move()
   }
 
-  die(): void {
-    this.world.kill(this)
+  die(reason: string): void {
+    this.world.kill(this, reason)
   }
 
   debug(): void {
@@ -69,7 +77,9 @@ class Prey extends Sprite implements Organism {
     this.sketch.textAlign(this.sketch.LEFT, this.sketch.TOP)
     this.sketch.fill('#1f0e1c')
     this.sketch.text(
-      `${this.health.toString()}${this.eats.toString()}`,
+      `${this.health.toString()}${this.eats.toString()}${this.rests.toString()}generation: ${
+        this.generation
+      }`,
       this.pos.x + 20,
       this.pos.y - 16
     )
@@ -116,13 +126,24 @@ class Prey extends Sprite implements Organism {
 
     const direction = dirs[0].copy()
 
-    if (
-      this.pos.x >= this.sketch.width ||
-      this.pos.x <= 0 ||
-      this.pos.y >= this.sketch.height ||
-      this.pos.y <= 0
-    ) {
-      direction.rotate(this.sketch.radians(180))
+    if (this.pos.x >= this.sketch.width - 8) {
+      direction.add(-1, 0)
+      direction.normalize()
+    }
+
+    if (this.pos.y >= this.sketch.height - 8) {
+      direction.add(0, -1)
+      direction.normalize()
+    }
+
+    if (this.pos.x <= 8) {
+      direction.add(1, 0)
+      direction.normalize()
+    }
+
+    if (this.pos.y <= 8) {
+      direction.add(0, 1)
+      direction.normalize()
     }
 
     this.pos.add(direction)

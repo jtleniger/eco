@@ -13,10 +13,11 @@ interface Organism {
   state: Set<State>
   dna: DNA
   health: Health
-  die: () => void
+  die: (reason: string) => void
   mates: Mates
   rests: Rests
   eats: Eats
+  generation: number
 }
 
 export default Organism

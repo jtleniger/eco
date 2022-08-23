@@ -102,7 +102,11 @@ class Mates implements Drive {
       this.organism.rests.start()
       m.rests.start()
 
-      this.world.addCreature(this.pos.copy(), this.organism.dna.mix(m.dna))
+      this.world.addCreature(
+        this.pos.copy(),
+        this.organism.dna.mix(m.dna),
+        this.organism.generation + 1
+      )
 
       return
     }

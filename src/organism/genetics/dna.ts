@@ -2,6 +2,7 @@ import { RandomInt } from '../../utilities'
 import Prey from '../prey'
 import { GeneType, GeneName } from './genes/geneType'
 import Gene from './genes/gene'
+import World from '../../world'
 
 export class DNA {
   genes: Map<GeneType, Gene>
@@ -43,23 +44,23 @@ export class DNA {
     return res
   }
 
-  static Default(type: string): DNA {
+  static Default(type: string, world: World): DNA {
     switch (type) {
       case typeof Prey:
         return new DNA(
           new Map([
-            [GeneType.FoodValue, new Gene(5, 5, 5)],
-            [GeneType.Full, new Gene(40, 40, 40)],
-            [GeneType.HuntRange, new Gene(256, 5, 5)],
-            [GeneType.MateRange, new Gene(256, 0, 0)],
-            [GeneType.MateCooldown, new Gene(500, 0, 0)],
-            [GeneType.MinFedToMate, new Gene(RandomInt(10, 30), 0, 0)],
-            [GeneType.MinAgeToMate, new Gene(RandomInt(3, 20), 0, 0)],
-            [GeneType.MaxAgeToMate, new Gene(RandomInt(20, 60), 0, 0)],
-            [GeneType.MaxEnergy, new Gene(RandomInt(100, 300), 0, 0)],
-            [GeneType.RestTime, new Gene(RandomInt(1, 7), 0, 0)],
-            [GeneType.MaxAge, new Gene(RandomInt(70, 120), 0, 0)],
-            [GeneType.MaxStarvation, new Gene(RandomInt(10, 30), 0, 0)],
+            [GeneType.FoodValue, new Gene(RandomInt(4, 6), 1, 10, world)],
+            [GeneType.Full, new Gene(RandomInt(40, 100), 30, 200, world)],
+            [GeneType.HuntRange, new Gene(RandomInt(100, 300), 128, 512, world)],
+            [GeneType.MateRange, new Gene(RandomInt(200, 300), 128, 512, world)],
+            [GeneType.MateCooldown, new Gene(RandomInt(400, 600), 100, 1000, world)],
+            [GeneType.MinFedToMate, new Gene(RandomInt(10, 40), 10, 90, world)],
+            [GeneType.MinAgeToMate, new Gene(RandomInt(5, 30), 5, 100, world)],
+            [GeneType.MaxAgeToMate, new Gene(RandomInt(70, 120), 20, 200, world)],
+            [GeneType.MaxEnergy, new Gene(RandomInt(200, 400), 100, 800, world)],
+            [GeneType.RestTime, new Gene(RandomInt(1, 7), 1, 7, world)],
+            [GeneType.MaxAge, new Gene(RandomInt(70, 120), 50, 200, world)],
+            [GeneType.MaxStarvation, new Gene(RandomInt(10, 30), 5, 50, world)],
           ])
         )
 

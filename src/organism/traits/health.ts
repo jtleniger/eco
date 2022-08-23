@@ -25,7 +25,7 @@ class Health {
     this.starvation++
 
     if (this.starvation > this.organism.dna.getValue(GeneType.MaxStarvation)) {
-      this.organism.die()
+      this.organism.die('starved')
     }
   }
 
@@ -33,7 +33,7 @@ class Health {
     this.age++
 
     if (this.age > this.organism.dna.getValue(GeneType.MaxAge)) {
-      this.organism.die()
+      this.organism.die('died of old age')
     }
   }
 

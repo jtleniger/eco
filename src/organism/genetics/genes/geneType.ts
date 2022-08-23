@@ -14,16 +14,16 @@ export const enum GeneType {
 }
 
 export const GeneName: Map<GeneType, String> = new Map([
-  [GeneType.FoodValue, 'Food Value'],
-  [GeneType.Full, 'Full Stomach'],
-  [GeneType.HuntRange, 'Hunt Range'],
-  [GeneType.MateRange, 'Mating Range'],
-  [GeneType.MateCooldown, 'Mating Cooldown'],
-  [GeneType.MinFedToMate, 'MinFedToMate'],
-  [GeneType.MinAgeToMate, 'MinAgeToMate'],
-  [GeneType.MaxAgeToMate, 'MaxAgeToMate'],
-  [GeneType.MaxEnergy, 'MaxEnergy'],
-  [GeneType.RestTime, 'RestTime'],
-  [GeneType.MaxAge, 'MaxAge'],
-  [GeneType.MaxStarvation, 'MaxStarvation'],
+  [GeneType.FoodValue, 'food value'],
+  [GeneType.Full, 'full stomach'],
+  [GeneType.HuntRange, 'hunt range'],
+  [GeneType.MateRange, 'mating range'],
+  [GeneType.MateCooldown, 'mating cooldown'],
+  [GeneType.MinFedToMate, 'minFedToMate'],
+  [GeneType.MinAgeToMate, 'minAgeToMate'],
+  [GeneType.MaxAgeToMate, 'maxAgeToMate'],
+  [GeneType.MaxEnergy, 'max energy'],
+  [GeneType.RestTime, 'rest time'],
+  [GeneType.MaxAge, 'max age'],
+  [GeneType.MaxStarvation, 'max starvation'],
 ])
