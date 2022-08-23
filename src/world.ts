@@ -1,6 +1,6 @@
 import p5 from 'p5'
 import Food from './food'
-import DNA from './organism/genes/dna'
+import { DNA } from './organism/genetics/dna'
 import Prey from './organism/prey'
 
 class World {
@@ -10,6 +10,7 @@ class World {
   food: Food[]
   foodTimer: number | null = null
   prey: Prey[]
+  ticks: number = 0
 
   constructor(sketch: p5) {
     this.food = []
@@ -56,9 +57,20 @@ class World {
   draw(): void {
     this.food.forEach((f) => f.draw())
     this.prey.forEach((c) => c.draw())
+
+    this.sketch.push()
+    this.sketch.textSize(12)
+    this.sketch.textAlign(this.sketch.LEFT, this.sketch.TOP)
+    this.sketch.fill('#1f0e1c')
+    this.sketch.text(`ticks: ${this.ticks}`, 2, 2)
+    this.sketch.pop()
   }
 
   update(): void {
+    if (this.sketch.frameCount % 60 === 0) {
+      this.ticks++
+    }
+
     this.prey.forEach((c) => c.update())
 
     if (this.foodTimer !== null) {

@@ -11,6 +11,7 @@ new p5((sketch: p5): void => {
   sketch.setup = (): void => {
     const canvas = sketch.createCanvas(sketch.windowWidth, sketch.windowHeight)
     sketch.noSmooth()
+    sketch.frameRate(60)
     canvas.style('display', 'block')
     world = new World(sketch)
     world.initFood()

@@ -1,25 +1,34 @@
 import p5 from 'p5'
 import Food from '../../food'
-import Eat from '../genes/eat'
+import { Clock } from '../../utilities'
+import World from '../../world'
+import { Eat as Gene } from '../genetics/genes'
+import Organism from '../organism'
 import State from '../state'
-import Behavior from './behavior'
+import Drive from './drive'
 
-class Eats implements Behavior {
-  private readonly gene: Eat
+class Eats implements Drive {
+  private readonly gene: Gene
+  private readonly world: World
   private readonly pos: p5.Vector
-  private readonly food: Food[]
   private readonly state: Set<State>
+  private readonly organism: Organism
+  private readonly clock: Clock
+
+  fed: number
 
   private nearbyFood: Food | null = null
-  private hunger: number = 0
   private _direction: p5.Vector | null = null
 
-  constructor(gene: Eat, pos: p5.Vector, state: Set<State>, food: Food[]) {
+  constructor(gene: Gene, organism: Organism) {
     this.gene = gene
-    this.pos = pos
+    this.pos = organism.pos
     this._direction = null
-    this.food = food
-    this.state = state
+    this.state = organism.state
+    this.fed = this.gene.full
+    this.organism = organism
+    this.world = this.organism.world
+    this.clock = new Clock(this.world, this.decFed.bind(this))
   }
 
   direction = (): p5.Vector | null => {
@@ -35,7 +44,7 @@ class Eats implements Behavior {
   }
 
   update = (): void => {
-    this.hunger++
+    this.clock.update()
 
     if (this.state.has(State.Mating)) {
       this.end()
@@ -56,6 +65,19 @@ class Eats implements Behavior {
     this.state.add(State.Hunting)
     this.nearbyFood = maybeFood
     this._direction = this.nearbyFood.pos.copy().sub(this.pos).normalize()
+  }
+
+  toString(): string {
+    return `fed: ${this.fed}\n`
+  }
+
+  private decFed(): void {
+    this.fed--
+
+    if (this.fed <= 0) {
+      this.organism.health.incStarvation()
+      this.fed = 0
+    }
   }
 
   private tryEat(): void {
@@ -82,10 +104,11 @@ class Eats implements Behavior {
     }
 
     this.nearbyFood.eaten = true
-    this.hunger -= this.gene.foodValue
+    this.fed += this.gene.foodValue
+    this.organism.health.resetStarvation()
 
-    if (this.hunger < 0) {
-      this.hunger = 0
+    if (this.fed > this.gene.full) {
+      this.fed = this.gene.full
     }
   }
 
@@ -93,7 +116,7 @@ class Eats implements Behavior {
     let minDistance = Infinity
     let food = null
 
-    this.food.forEach((f) => {
+    this.world.food.forEach((f) => {
       if (f.eaten) {
         return
       }

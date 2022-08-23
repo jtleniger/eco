@@ -1,17 +1,22 @@
 import p5 from 'p5'
-import DNA from './genes/dna'
+import { DNA } from './genetics/dna'
+import Health from './traits/health'
 import State from './state'
 import Eats from './traits/eats'
 import Mates from './traits/mates'
 import Rests from './traits/rests'
+import World from '../world'
 
 interface Organism {
+  world: World
   pos: p5.Vector
   state: Set<State>
   dna: DNA
-  mateBehavior: Mates
-  restBehavior: Rests
-  eatBehavior: Eats
+  health: Health
+  die: () => void
+  mates: Mates
+  rests: Rests
+  eats: Eats
 }
 
 export default Organism

@@ -1,20 +1,21 @@
 import p5 from 'p5'
-import Rest from '../genes/rest'
+import { Rest as Gene } from '../genetics/genes'
+import Organism from '../organism'
 import State from '../state'
-import Behavior from './behavior'
+import Drive from './drive'
 
-class Rests implements Behavior {
-  private readonly gene: Rest
+class Rests implements Drive {
+  private readonly gene: Gene
   private readonly state: Set<State>
 
   private energy: number = 0
   private _direction: p5.Vector | null
   private timeout: number | null = null
 
-  constructor(gene: Rest, state: Set<State>) {
+  constructor(gene: Gene, organism: Organism) {
     this.gene = gene
     this._direction = null
-    this.state = state
+    this.state = organism.state
   }
 
   direction(): p5.Vector | null {

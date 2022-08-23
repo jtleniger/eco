@@ -2,26 +2,31 @@ import p5 from 'p5'
 import Sprite from '../sprite'
 import State from './state'
 import Rests from './traits/rests'
-import Behavior from './traits/behavior'
+import Drive from './traits/drive'
 import World from '../world'
-import DNA from './genes/dna'
+import { DNA } from './genetics/dna'
 import Eats from './traits/eats'
 import Mates from './traits/mates'
 import Organism from './organism'
+import Health from './traits/health'
 
 class Prey extends Sprite implements Organism {
   get imgPath(): string {
     return 'assets/creature.png'
   }
 
+  scale: number = 2
+  rotation: number = 0
+
   world: World
   state: Set<State> = new Set()
   dna: DNA = DNA.Default(typeof Prey)
-  mateBehavior: Mates
-  restBehavior: Rests
-  eatBehavior: Eats
+  health: Health
+  mates: Mates
+  rests: Rests
+  eats: Eats
 
-  private readonly traits: Behavior[]
+  private readonly drives: Drive[]
 
   constructor(sketch: p5, world: World, pos: p5.Vector, dna?: DNA) {
     super(sketch, pos)
@@ -31,10 +36,13 @@ class Prey extends Sprite implements Organism {
       this.dna = dna
     }
 
-    this.restBehavior = new Rests(this.dna.rest, this.state)
-    this.eatBehavior = new Eats(this.dna.eat, this.pos, this.state, this.world.food)
-    this.mateBehavior = new Mates(this.dna.mate, this, this.world)
-    this.traits = [this.restBehavior, this.eatBehavior, this.mateBehavior]
+    this.health = new Health(this.dna.health, this)
+
+    this.rests = new Rests(this.dna.rest, this)
+    this.eats = new Eats(this.dna.eat, this)
+    this.mates = new Mates(this.dna.mate, this)
+
+    this.drives = [this.rests, this.eats, this.mates]
   }
 
   reset(): void {
@@ -42,43 +50,59 @@ class Prey extends Sprite implements Organism {
   }
 
   update(): void {
-    for (const t of this.traits) {
+    this.health.update()
+
+    for (const t of this.drives) {
       t.update(this.state)
     }
 
     this.move()
   }
 
+  die(): void {
+    this.world.kill(this)
+  }
+
+  debug(): void {
+    this.sketch.push()
+    this.sketch.textSize(12)
+    this.sketch.textAlign(this.sketch.LEFT, this.sketch.TOP)
+    this.sketch.fill('#1f0e1c')
+    this.sketch.text(
+      `${this.health.toString()}${this.eats.toString()}`,
+      this.pos.x + 20,
+      this.pos.y - 16
+    )
+    this.sketch.pop()
+  }
+
   draw(): void {
-    for (const t of this.traits) {
+    for (const t of this.drives) {
       if (t.beforeDraw !== undefined) {
         t.beforeDraw(this.sketch)
       }
     }
 
+    const mouseOverRadius = 16
+
+    const dist =
+      Math.pow(this.sketch.mouseX - this.pos.x, 2) + Math.pow(this.sketch.mouseY - this.pos.y, 2)
+
+    if (dist <= Math.pow(mouseOverRadius, 2)) {
+      this.debug()
+    }
+
     super.draw()
 
-    for (const t of this.traits) {
+    for (const t of this.drives) {
       if (t.afterDraw !== undefined) {
         t.afterDraw(this.sketch)
       }
     }
   }
 
-  health(): void {
-    // if (this.fed === 0) {
-    //   this.world.kill(this)
-    // }
-    // if (this.fed < 7) {
-    //   this.state.delete(Creature.STATES.Mating)
-    //   this.state.delete(Creature.STATES.Available)
-    // } else if (this.unavailableTimer === null) {
-    //   this.state.add(Creature.STATES.Available)
-    // }
-  }
-
   move(): void {
-    const dirs = this.traits.map((t) => t.direction(this.state)).filter((d) => d !== null)
+    const dirs = this.drives.map((t) => t.direction(this.state)).filter((d) => d !== null)
 
     if (dirs.length > 1) {
       throw Error('received multiple candidate directions')

@@ -5,6 +5,8 @@ abstract class Sprite {
   sketch: p5
   pos: p5.Vector
   abstract get imgPath(): string
+  abstract scale: number
+  abstract rotation: number
 
   constructor(sketch: p5, pos: p5.Vector) {
     this.sketch = sketch
@@ -24,12 +26,14 @@ abstract class Sprite {
     if (this.img === null) {
       return
     }
-
-    const x = this.pos.x - this.img.width
-    const y = this.pos.y - this.img.height
-    const width = this.img.width * 2
-    const height = this.img.height * 2
-    this.sketch.image(this.img, x, y, width, height)
+    const width = this.img.width * this.scale
+    const height = this.img.height * this.scale
+    this.sketch.push()
+    this.sketch.translate(this.pos.x, this.pos.y)
+    this.sketch.rotate(this.rotation)
+    this.sketch.imageMode(this.sketch.CENTER)
+    this.sketch.image(this.img, 0, 0, width, height)
+    this.sketch.pop()
   }
 }
 
