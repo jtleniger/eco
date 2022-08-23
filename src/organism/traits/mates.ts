@@ -43,10 +43,14 @@ class Mates implements Drive {
 
     this.cooldown++
 
+    const fedPercentage = Math.round(
+      (this.organism.eats.fed / this.organism.dna.getValue(GeneType.Full)) * 100
+    )
+
     if (
       this.organism.health.age > this.organism.dna.getValue(GeneType.MaxAgeToMate) ||
       this.organism.health.age < this.organism.dna.getValue(GeneType.MinAgeToMate) ||
-      this.organism.eats.fed < this.organism.dna.getValue(GeneType.MinFedToMate)
+      fedPercentage < this.organism.dna.getValue(GeneType.MinFedPercentageToMate)
     ) {
       this.state.delete(State.Available)
       this.state.delete(State.Mating)

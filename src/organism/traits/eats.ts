@@ -24,7 +24,7 @@ class Eats implements Drive {
     this.pos = this.organism.pos
     this._direction = null
     this.state = this.organism.state
-    this.fed = this.organism.dna.getValue(GeneType.Full)
+    this.fed = Math.round(this.organism.dna.getValue(GeneType.Full) / 2)
     this.world = this.organism.world
     this.clock = new Clock(this.world, this.decFed.bind(this))
   }

@@ -49,7 +49,7 @@ class World {
   }
 
   spawnCreatures(): void {
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 10; i++) {
       const pos = this.sketch.createVector(
         this.sketch.random(this.sketch.width),
         this.sketch.random(this.sketch.height)
@@ -101,7 +101,7 @@ class World {
     this.foodTimer = window.setTimeout(() => {
       this.foodTimer = null
       this.growFood()
-    }, Math.abs(this.sketch.randomGaussian(4) * 500))
+    }, Math.abs(this.sketch.randomGaussian(4) * 100))
   }
 }
 

@@ -2,8 +2,8 @@ import World from '../../../world'
 
 export default class Gene {
   value: number
-  minValue: number
-  maxValue: number
+  readonly minValue: number
+  readonly maxValue: number
   private readonly world: World
 
   constructor(value: number, minValue: number, maxValue: number, world: World) {
@@ -33,7 +33,7 @@ export default class Gene {
 
       const range = this.maxValue - this.minValue
 
-      const delta = range * magnitude * (positive ? 1 : -1)
+      const delta = Math.round(range * magnitude * (positive ? 1 : -1))
 
       newValue += delta
     }
@@ -46,6 +46,6 @@ export default class Gene {
       newValue = this.minValue
     }
 
-    return new Gene(this.minValue, this.maxValue, newValue, this.world)
+    return new Gene(newValue, this.minValue, this.maxValue, this.world)
   }
 }
