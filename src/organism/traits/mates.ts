@@ -1,12 +1,11 @@
 import p5 from 'p5'
 import World from '../../world'
-import { Mate as Gene } from '../genetics/genes'
+import GeneType from '../genetics/genes/geneType'
 import Organism from '../organism'
 import State from '../state'
 import Drive from './drive'
 
 class Mates implements Drive {
-  private readonly gene: Gene
   private readonly pos: p5.Vector
   private readonly world: World
   private readonly state: Set<State>
@@ -15,8 +14,7 @@ class Mates implements Drive {
   private nearbyMate: Organism | null = null
   private cooldown: number
 
-  constructor(gene: Gene, organism: Organism) {
-    this.gene = gene
+  constructor(organism: Organism) {
     this.pos = organism.pos
     this._direction = null
     this.state = organism.state
@@ -34,7 +32,7 @@ class Mates implements Drive {
   }
 
   update = (): void => {
-    if (this.cooldown >= this.gene.cooldown) {
+    if (this.cooldown >= this.organism.dna.getValue(GeneType.MateCooldown)) {
       this.state.add(State.Available)
     }
 
@@ -45,7 +43,11 @@ class Mates implements Drive {
 
     this.cooldown++
 
-    if (this.organism.health.age > this.gene.maxAge || this.organism.eats.fed < this.gene.minFed) {
+    if (
+      this.organism.health.age > this.organism.dna.getValue(GeneType.MaxAgeToMate) ||
+      this.organism.health.age < this.organism.dna.getValue(GeneType.MinAgeToMate) ||
+      this.organism.eats.fed < this.organism.dna.getValue(GeneType.MinFedToMate)
+    ) {
       this.state.delete(State.Available)
       this.state.delete(State.Mating)
       return
@@ -91,7 +93,7 @@ class Mates implements Drive {
 
     const dist = this.pos.dist(m.pos)
 
-    if (dist < this.gene.mateRange) {
+    if (dist < 16) {
       this.state.delete(State.Available)
       m.state.delete(State.Available)
 
@@ -123,7 +125,7 @@ class Mates implements Drive {
 
       const distance = m.pos.dist(this.pos)
 
-      if (distance > this.gene.searchRange) {
+      if (distance > this.organism.dna.getValue(GeneType.MateRange)) {
         return
       }
 

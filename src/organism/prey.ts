@@ -36,11 +36,11 @@ class Prey extends Sprite implements Organism {
       this.dna = dna
     }
 
-    this.health = new Health(this.dna.health, this)
+    this.health = new Health(this)
 
-    this.rests = new Rests(this.dna.rest, this)
-    this.eats = new Eats(this.dna.eat, this)
-    this.mates = new Mates(this.dna.mate, this)
+    this.rests = new Rests(this)
+    this.eats = new Eats(this)
+    this.mates = new Mates(this)
 
     this.drives = [this.rests, this.eats, this.mates]
   }

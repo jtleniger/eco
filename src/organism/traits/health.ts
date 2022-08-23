@@ -1,19 +1,17 @@
 import { Clock } from '../../utilities'
 import World from '../../world'
-import { Health as Gene } from '../genetics/genes'
+import GeneType from '../genetics/genes/geneType'
 import Organism from '../organism'
 
 class Health {
   age: number = 0
   starvation: number = 0
 
-  private readonly gene: Gene
   private readonly organism: Organism
   private readonly world: World
   private readonly clock: Clock
 
-  constructor(gene: Gene, organism: Organism) {
-    this.gene = gene
+  constructor(organism: Organism) {
     this.organism = organism
     this.world = this.organism.world
     this.clock = new Clock(this.world, this.incAge.bind(this))
@@ -26,7 +24,7 @@ class Health {
   incStarvation(): void {
     this.starvation++
 
-    if (this.starvation > this.gene.maxStarvation) {
+    if (this.starvation > this.organism.dna.getValue(GeneType.MaxStarvation)) {
       this.organism.die()
     }
   }
@@ -34,7 +32,7 @@ class Health {
   incAge(): void {
     this.age++
 
-    if (this.age > this.gene.maxAge) {
+    if (this.age > this.organism.dna.getValue(GeneType.MaxAge)) {
       this.organism.die()
     }
   }

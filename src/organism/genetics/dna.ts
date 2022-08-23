@@ -1,41 +1,35 @@
-import * as Genes from './genes'
 import { RandomInt } from '../../utilities'
 import Prey from '../prey'
+import GeneType from './genes/geneType'
+import Gene from './genes/gene'
 
 export class DNA {
-  eat: Genes.Eat
-  mate: Genes.Mate
-  rest: Genes.Rest
-  health: Genes.Health
+  genes: Map<GeneType, Gene>
 
-  constructor(eat: Genes.Eat, mate: Genes.Mate, rest: Genes.Rest, health: Genes.Health) {
-    this.eat = eat
-    this.mate = mate
-    this.rest = rest
-    this.health = health
+  constructor(genes: Map<GeneType, Gene>) {
+    this.genes = genes
+  }
+
+  getValue(geneType: GeneType): number {
+    if (!this.genes.has(geneType)) {
+      throw Error(`attempted to get non-existent gene ${geneType}`)
+    }
+
+    const g = this.genes.get(geneType) as Gene
+
+    return g.value
   }
 
   mix(other: DNA): DNA {
-    return new DNA(
-      structuredClone(this.eat),
-      structuredClone(this.mate),
-      structuredClone(this.rest),
-      structuredClone(this.health)
-    )
+    return new DNA(new Map())
   }
 
   toString(): string {
     let res = ''
 
-    for (const [key, value] of [
-      ...Object.entries(this.eat),
-      ...Object.entries(this.mate),
-      ...Object.entries(this.rest),
-      ...Object.entries(this.health),
-    ]) {
-      const strVal = value as string
-      res += `${key}: ${strVal}\n`
-    }
+    this.genes.forEach((v, k) => {
+      res += `${k}: ${v.value}\n`
+    })
 
     return res
   }
@@ -44,29 +38,23 @@ export class DNA {
     switch (type) {
       case typeof Prey:
         return new DNA(
-          {
-            foodValue: 5,
-            full: 40,
-            huntRange: 256,
-            eatRange: 16,
-          },
-          {
-            searchRange: 256,
-            mateRange: 32,
-            cooldown: 500,
-            minFed: RandomInt(10, 30),
-            minAge: RandomInt(3, 20),
-            maxAge: RandomInt(20, 60),
-          },
-          {
-            maxEnergy: RandomInt(100, 300),
-            restAmount: RandomInt(1, 7),
-          },
-          {
-            maxAge: RandomInt(70, 120),
-            maxStarvation: RandomInt(10, 30),
-          }
+          new Map([
+            [GeneType.FoodValue, new Gene(5, 5, 5)],
+            [GeneType.Full, new Gene(40, 40, 40)],
+            [GeneType.HuntRange, new Gene(5, 5, 5)],
+            [GeneType.EatRange, new Gene(16, 0, 0)],
+            [GeneType.MateRange, new Gene(256, 0, 0)],
+            [GeneType.MateCooldown, new Gene(500, 0, 0)],
+            [GeneType.MinFedToMate, new Gene(RandomInt(10, 30), 0, 0)],
+            [GeneType.MinAgeToMate, new Gene(RandomInt(3, 20), 0, 0)],
+            [GeneType.MaxAgeToMate, new Gene(RandomInt(20, 60), 0, 0)],
+            [GeneType.MaxEnergy, new Gene(RandomInt(100, 300), 0, 0)],
+            [GeneType.RestTime, new Gene(RandomInt(1, 7), 0, 0)],
+            [GeneType.MaxAge, new Gene(RandomInt(70, 120), 0, 0)],
+            [GeneType.MaxStarvation, new Gene(RandomInt(10, 30), 0, 0)],
+          ])
         )
+
       default:
         throw Error(`${type} has no DNA default`)
     }

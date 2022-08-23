@@ -1,21 +1,21 @@
 import p5 from 'p5'
-import { Rest as Gene } from '../genetics/genes'
+import GeneType from '../genetics/genes/geneType'
 import Organism from '../organism'
 import State from '../state'
 import Drive from './drive'
 
 class Rests implements Drive {
-  private readonly gene: Gene
+  private readonly organism: Organism
   private readonly state: Set<State>
 
   private energy: number = 0
   private _direction: p5.Vector | null
   private timeout: number | null = null
 
-  constructor(gene: Gene, organism: Organism) {
-    this.gene = gene
+  constructor(organism: Organism) {
     this._direction = null
-    this.state = organism.state
+    this.organism = organism
+    this.state = this.organism.state
   }
 
   direction(): p5.Vector | null {
@@ -47,11 +47,11 @@ class Rests implements Drive {
     this._direction = null
     this.timeout = window.setTimeout(() => {
       this.end()
-    }, this.gene.restAmount * 1000)
+    }, this.organism.dna.getValue(GeneType.RestTime) * 1000)
   }
 
   end(): void {
-    this.energy = this.gene.maxEnergy
+    this.energy = this.organism.dna.getValue(GeneType.MaxEnergy)
     this.state.delete(State.Resting)
     this._direction = p5.Vector.random2D()
   }

@@ -2,13 +2,12 @@ import p5 from 'p5'
 import Food from '../../food'
 import { Clock } from '../../utilities'
 import World from '../../world'
-import { Eat as Gene } from '../genetics/genes'
+import GeneType from '../genetics/genes/geneType'
 import Organism from '../organism'
 import State from '../state'
 import Drive from './drive'
 
 class Eats implements Drive {
-  private readonly gene: Gene
   private readonly world: World
   private readonly pos: p5.Vector
   private readonly state: Set<State>
@@ -20,13 +19,12 @@ class Eats implements Drive {
   private nearbyFood: Food | null = null
   private _direction: p5.Vector | null = null
 
-  constructor(gene: Gene, organism: Organism) {
-    this.gene = gene
-    this.pos = organism.pos
-    this._direction = null
-    this.state = organism.state
-    this.fed = this.gene.full
+  constructor(organism: Organism) {
     this.organism = organism
+    this.pos = this.organism.pos
+    this._direction = null
+    this.state = this.organism.state
+    this.fed = this.organism.dna.getValue(GeneType.Full)
     this.world = this.organism.world
     this.clock = new Clock(this.world, this.decFed.bind(this))
   }
@@ -92,7 +90,7 @@ class Eats implements Drive {
 
     const dist = this.pos.dist(this.nearbyFood.pos)
 
-    if (dist < this.gene.eatRange) {
+    if (dist < 16) {
       this.eat()
       this.end()
     }
@@ -104,11 +102,11 @@ class Eats implements Drive {
     }
 
     this.nearbyFood.eaten = true
-    this.fed += this.gene.foodValue
+    this.fed += this.organism.dna.getValue(GeneType.FoodValue)
     this.organism.health.resetStarvation()
 
-    if (this.fed > this.gene.full) {
-      this.fed = this.gene.full
+    if (this.fed > this.organism.dna.getValue(GeneType.Full)) {
+      this.fed = this.organism.dna.getValue(GeneType.Full)
     }
   }
 
@@ -123,7 +121,7 @@ class Eats implements Drive {
 
       const distance = f.pos.dist(this.pos)
 
-      if (distance > this.gene.huntRange) {
+      if (distance > this.organism.dna.getValue(GeneType.HuntRange)) {
         return
       }
 
