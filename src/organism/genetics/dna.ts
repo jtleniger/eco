@@ -24,6 +24,22 @@ export class DNA {
     )
   }
 
+  toString(): string {
+    let res = ''
+
+    for (const [key, value] of [
+      ...Object.entries(this.eat),
+      ...Object.entries(this.mate),
+      ...Object.entries(this.rest),
+      ...Object.entries(this.health),
+    ]) {
+      const strVal = value as string
+      res += `${key}: ${strVal}\n`
+    }
+
+    return res
+  }
+
   static Default(type: string): DNA {
     switch (type) {
       case typeof Prey:
@@ -32,7 +48,7 @@ export class DNA {
             foodValue: 5,
             full: 40,
             huntRange: 256,
-            eatRange: 32,
+            eatRange: 16,
           },
           {
             searchRange: 256,
@@ -44,7 +60,7 @@ export class DNA {
           },
           {
             maxEnergy: RandomInt(100, 300),
-            restDurationSec: RandomInt(1, 7),
+            restAmount: RandomInt(1, 7),
           },
           {
             maxAge: RandomInt(70, 120),

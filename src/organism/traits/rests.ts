@@ -47,7 +47,7 @@ class Rests implements Drive {
     this._direction = null
     this.timeout = window.setTimeout(() => {
       this.end()
-    }, this.gene.restDurationSec * 1000)
+    }, this.gene.restAmount * 1000)
   }
 
   end(): void {

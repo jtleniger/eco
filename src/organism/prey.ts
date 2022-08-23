@@ -73,6 +73,8 @@ class Prey extends Sprite implements Organism {
       this.pos.x + 20,
       this.pos.y - 16
     )
+    this.sketch.textAlign(this.sketch.RIGHT, this.sketch.TOP)
+    this.sketch.text(this.dna.toString(), this.pos.x - 20, this.pos.y - 16)
     this.sketch.pop()
   }
 
