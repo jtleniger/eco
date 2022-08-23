@@ -32,9 +32,9 @@ class Prey extends Sprite implements Organism {
     super(sketch, pos)
     this.world = world
 
-    if (dna !== undefined) {
-      this.dna = dna
-    }
+    // if (dna !== undefined) {
+    //   this.dna = dna
+    // }
 
     this.health = new Health(this)
 

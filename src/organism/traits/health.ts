@@ -1,6 +1,6 @@
 import { Clock } from '../../utilities'
 import World from '../../world'
-import GeneType from '../genetics/genes/geneType'
+import { GeneType } from '../genetics/genes/geneType'
 import Organism from '../organism'
 
 class Health {

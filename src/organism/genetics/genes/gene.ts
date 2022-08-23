@@ -8,4 +8,8 @@ export default class Gene {
     this.minValue = minValue
     this.maxValue = maxValue
   }
+
+  mix(other: Gene): Gene {
+    return new Gene(this.minValue, this.maxValue, (other.value + this.value) / 2)
+  }
 }

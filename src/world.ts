@@ -51,7 +51,7 @@ class World {
   }
 
   addCreature(pos: p5.Vector, dna?: DNA): void {
-    this.prey.push(new Prey(this.sketch, this, pos, dna))
+    this.prey.push(new Prey(this.sketch, this, pos))
   }
 
   draw(): void {

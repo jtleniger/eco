@@ -1,6 +1,6 @@
 import { RandomInt } from '../../utilities'
 import Prey from '../prey'
-import GeneType from './genes/geneType'
+import { GeneType, GeneName } from './genes/geneType'
 import Gene from './genes/gene'
 
 export class DNA {
@@ -21,14 +21,23 @@ export class DNA {
   }
 
   mix(other: DNA): DNA {
-    return new DNA(new Map())
+    const newGenes = new Map()
+
+    this.genes.forEach((gene, type) => {
+      const otherGene = other.genes.get(type) as Gene
+
+      newGenes.set(type, gene.mix(otherGene))
+    })
+
+    return new DNA(newGenes)
   }
 
   toString(): string {
     let res = ''
 
     this.genes.forEach((v, k) => {
-      res += `${k}: ${v.value}\n`
+      const name = GeneName.get(k) as string
+      res += `${name}: ${v.value}\n`
     })
 
     return res
@@ -41,8 +50,7 @@ export class DNA {
           new Map([
             [GeneType.FoodValue, new Gene(5, 5, 5)],
             [GeneType.Full, new Gene(40, 40, 40)],
-            [GeneType.HuntRange, new Gene(5, 5, 5)],
-            [GeneType.EatRange, new Gene(16, 0, 0)],
+            [GeneType.HuntRange, new Gene(256, 5, 5)],
             [GeneType.MateRange, new Gene(256, 0, 0)],
             [GeneType.MateCooldown, new Gene(500, 0, 0)],
             [GeneType.MinFedToMate, new Gene(RandomInt(10, 30), 0, 0)],

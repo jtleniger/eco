@@ -1,5 +1,5 @@
 import p5 from 'p5'
-import GeneType from '../genetics/genes/geneType'
+import { GeneType } from '../genetics/genes/geneType'
 import Organism from '../organism'
 import State from '../state'
 import Drive from './drive'
