@@ -57,7 +57,7 @@ export class DNA {
             [GeneType.MinFedPercentageToMate, new Gene(RandomInt(60, 90), 55, 100, world)],
             [GeneType.MinAgeToMate, new Gene(RandomInt(10, 35), 5, 100, world)],
             [GeneType.MaxAgeToMate, new Gene(RandomInt(50, 200), 20, 300, world)],
-            [GeneType.MaxEnergy, new Gene(RandomInt(200, 400), 100, 800, world)],
+            [GeneType.MaxEnergy, new Gene(RandomInt(4, 16), 1, 32, world)],
             [GeneType.RestTime, new Gene(RandomInt(1, 7), 1, 7, world)],
             [GeneType.MaxAge, new Gene(RandomInt(70, 150), 50, 300, world)],
             [GeneType.MaxStarvation, new Gene(RandomInt(10, 30), 5, 50, world)],

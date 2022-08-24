@@ -21,7 +21,7 @@ export class Clock {
   constructor(speed: Speed, onTick: () => void, interval?: number) {
     this.speed = speed
     this.onTick = onTick
-    this.interval = Math.round((interval === undefined ? 1 : interval) * 60 * this.speed.current)
+    this.interval = Math.round(((interval === undefined ? 1 : interval) * 60) / this.speed.current)
   }
 
   update(): void {

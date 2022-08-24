@@ -12,14 +12,16 @@ class Rests implements Drive {
   private energy: number = 0
   private _direction: p5.Vector | null
   private remaining: number
-  private readonly clock: Clock
+  private readonly restClock: Clock
+  private readonly energyClock: Clock
 
   constructor(organism: Organism) {
     this._direction = null
     this.organism = organism
     this.state = this.organism.state
     this.remaining = this.organism.dna.getValue(GeneType.RestTime)
-    this.clock = new Clock(this.organism.world.speed, this.decRemaining.bind(this))
+    this.restClock = new Clock(this.organism.world.speed, this.decRest.bind(this))
+    this.energyClock = new Clock(this.organism.world.speed, this.decEnergy.bind(this))
   }
 
   direction(): p5.Vector | null {
@@ -31,17 +33,8 @@ class Rests implements Drive {
   }
 
   update = (): void => {
-    this.clock.update()
-
-    if (this.state.has(State.Resting)) {
-      return
-    }
-
-    this.energy--
-
-    if (this.energy <= 0) {
-      this.start()
-    }
+    this.restClock.update()
+    this.energyClock.update()
   }
 
   start(): void {
@@ -60,7 +53,7 @@ class Rests implements Drive {
     return `energy: ${this.energy}\nremaining rest: ${this.remaining}\n`
   }
 
-  private decRemaining(): void {
+  private decRest(): void {
     if (!this.state.has(State.Resting)) {
       return
     }
@@ -69,6 +62,18 @@ class Rests implements Drive {
 
     if (this.remaining <= 0) {
       this.end()
+    }
+  }
+
+  private decEnergy(): void {
+    if (this.state.has(State.Resting)) {
+      return
+    }
+
+    this.energy--
+
+    if (this.energy <= 0) {
+      this.start()
     }
   }
 }
