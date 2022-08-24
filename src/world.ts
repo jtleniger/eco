@@ -22,7 +22,6 @@ class World {
     this.prey = []
     this.sketch = sketch
     this.stats.set('born', 0)
-    this.speed.set(2.0)
     this.foodClock = new Clock(this.speed, this.growFood.bind(this), 0.4)
   }
 
@@ -74,20 +73,6 @@ class World {
   draw(): void {
     this.food.forEach((f) => f.draw())
     this.prey.forEach((c) => c.draw())
-
-    this.sketch.push()
-    this.sketch.textSize(12)
-    this.sketch.textAlign(this.sketch.LEFT, this.sketch.TOP)
-    this.sketch.fill('#1f0e1c')
-
-    let stats = ''
-    this.stats.forEach((v, k) => {
-      stats += `${k}: ${v}\n`
-    })
-
-    this.sketch.text(stats, 100, 2)
-
-    this.sketch.pop()
   }
 
   update(): void {

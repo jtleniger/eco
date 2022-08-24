@@ -29,7 +29,10 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
   },
   plugins: [
-    new HtmlWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      title: 'eco',
+      template: 'src/index.ejs',
+    }),
     new CopyPlugin({
       patterns: [
         { from: path.resolve(__dirname, 'assets'), to: path.resolve(__dirname, 'dist/assets') },
