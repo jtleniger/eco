@@ -19,7 +19,7 @@ class Rests implements Drive {
     this.organism = organism
     this.state = this.organism.state
     this.remaining = this.organism.dna.getValue(GeneType.RestTime)
-    this.clock = new Clock(this.organism.world, this.decRemaining.bind(this))
+    this.clock = new Clock(this.organism.world.speed, this.decRemaining.bind(this))
   }
 
   direction(): p5.Vector | null {

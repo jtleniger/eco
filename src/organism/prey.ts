@@ -146,6 +146,8 @@ class Prey extends Sprite implements Organism {
       direction.normalize()
     }
 
+    direction.setMag(this.world.speed.current)
+
     this.pos.add(direction)
 
     this.pos.x = this.sketch.constrain(this.pos.x, 0, this.sketch.width)

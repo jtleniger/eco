@@ -2,6 +2,8 @@ import p5 from 'p5'
 import Food from './food'
 import { DNA } from './organism/genetics/dna'
 import Prey from './organism/prey'
+import Speed from './speed'
+import { Clock } from './utilities'
 
 class World {
   private static readonly MAX_FOOD: number = 50
@@ -10,14 +12,18 @@ class World {
   food: Food[]
   foodTimer: number | null = null
   prey: Prey[]
-  ticks: number = 0
+  frames: number = 0
   stats: Map<string, number> = new Map()
+  speed: Speed = new Speed()
+  foodClock: Clock
 
   constructor(sketch: p5) {
     this.food = []
     this.prey = []
     this.sketch = sketch
     this.stats.set('born', 0)
+    this.speed.set(2.0)
+    this.foodClock = new Clock(this.speed, this.growFood.bind(this), 0.4)
   }
 
   initFood(): void {
@@ -73,7 +79,6 @@ class World {
     this.sketch.textSize(12)
     this.sketch.textAlign(this.sketch.LEFT, this.sketch.TOP)
     this.sketch.fill('#1f0e1c')
-    this.sketch.text(`ticks: ${this.ticks}`, 2, 2)
 
     let stats = ''
     this.stats.forEach((v, k) => {
@@ -88,9 +93,7 @@ class World {
   update(): void {
     this.stats.set('alive', this.prey.length)
 
-    if (this.sketch.frameCount % 60 === 0) {
-      this.ticks++
-    }
+    Clock.setFrames(this.sketch.frameCount)
 
     this.prey.forEach((c) => c.update())
 

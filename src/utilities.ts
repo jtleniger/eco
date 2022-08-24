@@ -1,5 +1,5 @@
 import p5 from 'p5'
-import World from './world'
+import Speed from './speed'
 
 function RandomInt(low: number, high: number): number {
   const range = high - low
@@ -12,21 +12,26 @@ function RandomSketchPos(sketch: p5): p5.Vector {
 }
 
 export class Clock {
-  private lastTick: number
-  private readonly world: World
+  static frame: number = 0
+  static scale: number = 100
+  private readonly speed: Speed
   private readonly onTick: () => void
+  private readonly interval: number
 
-  constructor(world: World, onTick: () => void) {
-    this.world = world
-    this.lastTick = this.world.ticks
+  constructor(speed: Speed, onTick: () => void, interval?: number) {
+    this.speed = speed
     this.onTick = onTick
+    this.interval = Math.round((interval === undefined ? 1 : interval) * 60 * this.speed.current)
   }
 
   update(): void {
-    if (this.lastTick < this.world.ticks) {
+    if (Clock.frame % this.interval === 0) {
       this.onTick()
-      this.lastTick = this.world.ticks
     }
+  }
+
+  static setFrames(frame: number): void {
+    Clock.frame = frame
   }
 }
 

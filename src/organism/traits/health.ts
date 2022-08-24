@@ -14,7 +14,7 @@ class Health {
   constructor(organism: Organism) {
     this.organism = organism
     this.world = this.organism.world
-    this.clock = new Clock(this.world, this.incAge.bind(this))
+    this.clock = new Clock(this.world.speed, this.incAge.bind(this))
   }
 
   update(): void {
