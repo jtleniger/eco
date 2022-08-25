@@ -35,5 +35,6 @@ h1 {
   flex-wrap: wrap;
   grid-column: 1 / span 1;
   grid-row: 2 / span 1;
+  min-height: 0;
 }
 </style>
