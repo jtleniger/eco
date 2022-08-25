@@ -1,13 +1,17 @@
 <script lang="ts" setup>
-import { isReactive, toRef } from 'vue'
-
 const props = defineProps<{
-  stats?: Map<string, number>
+  stats: Map<string, number>
 }>()
-
-console.log(isReactive(props.stats))
 </script>
 
 <template>
-  {{ JSON.stringify(stats) }}
+  <h1>statistics</h1>
+  <div v-for="[v, k] in stats.entries()">{{ v }}: {{ k }}</div>
 </template>
+
+<style scoped>
+h1 {
+  font-weight: normal;
+  margin: 0;
+}
+</style>

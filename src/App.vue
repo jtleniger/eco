@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
-import type { Ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import World from './world'
 import p5 from 'p5'
 import Statistics from './components/Statistics.vue'
-import { computed } from '@vue/reactivity'
 
-const world: Ref<World | null> = ref(null)
-
-const stats = computed(() => world.value?.stats)
+let world: World
+let stats = ref<Map<string, number>>(new Map())
 
 onMounted(() => {
   new p5((sketch: p5): void => {
@@ -16,19 +13,20 @@ onMounted(() => {
       sketch.createCanvas(sketch.windowWidth - 410, sketch.windowHeight - 210)
       sketch.noSmooth()
       sketch.frameRate(60)
-      world.value = new World(sketch)
-      world.value.initFood()
-      world.value.spawnCreatures()
+      world = new World(sketch)
+      world.initFood()
+      world.spawnCreatures()
+      world.registerOnTick(() => (stats.value = world.stats))
     }
 
     sketch.draw = (): void => {
-      if (world.value === null) {
+      if (world === null) {
         return
       }
 
       sketch.background('#9A6348')
-      world.value.draw()
-      world.value.update()
+      world.draw()
+      world.update()
     }
   }, document.getElementById('simulator') ?? document.body)
 })
@@ -40,13 +38,14 @@ onMounted(() => {
     <section class="right"></section>
     <section class="top"></section>
     <section id="simulator" class="simulator"></section>
-    <section class="bottom">{{ world?.stats }}<Statistics :stats="stats"></Statistics></section>
+    <section class="bottom"><Statistics :stats="stats"></Statistics></section>
   </main>
 </template>
 
 <style>
 * {
   box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 body {

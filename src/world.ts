@@ -16,6 +16,8 @@ class World {
   stats: Map<string, number> = new Map()
   speed: Speed = new Speed()
   foodClock: Clock
+  onTickClock: Clock
+  onTicks: (() => void)[]
 
   constructor(sketch: p5) {
     this.food = []
@@ -23,6 +25,14 @@ class World {
     this.sketch = sketch
     this.stats.set('born', 0)
     this.foodClock = new Clock(this.speed, this.growFood.bind(this), 0.4)
+    this.onTicks = []
+    this.onTickClock = new Clock(this.speed, () => {
+      this.onTicks.forEach((o) => o())
+    })
+  }
+
+  registerOnTick(callback: () => void): void {
+    this.onTicks.push(callback)
   }
 
   initFood(): void {
@@ -79,17 +89,14 @@ class World {
     this.stats.set('alive', this.prey.length)
 
     Clock.setFrames(this.sketch.frameCount)
+    this.foodClock.update()
+    this.onTickClock.update()
 
     this.prey.forEach((c) => c.update())
 
     if (this.foodTimer !== null) {
       return
     }
-
-    this.foodTimer = window.setTimeout(() => {
-      this.foodTimer = null
-      this.growFood()
-    }, Math.abs(this.sketch.randomGaussian(4) * 100))
   }
 }
 
