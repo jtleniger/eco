@@ -1,6 +1,6 @@
-import p5 from 'p5'
+import type p5 from 'p5'
 import Food from './food'
-import { DNA } from './organism/genetics/dna'
+import type { DNA } from './organism/genetics/dna'
 import Prey from './organism/prey'
 import Speed from './speed'
 import { Clock } from './utilities'

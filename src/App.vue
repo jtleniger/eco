@@ -1,25 +1,34 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import type { Ref } from 'vue'
 import World from './world'
 import p5 from 'p5'
+import Statistics from './components/Statistics.vue'
+import { computed } from '@vue/reactivity'
+
+const world: Ref<World | null> = ref(null)
+
+const stats = computed(() => world.value?.stats)
 
 onMounted(() => {
   new p5((sketch: p5): void => {
-    let world: World
-
     sketch.setup = (): void => {
       sketch.createCanvas(sketch.windowWidth - 410, sketch.windowHeight - 210)
       sketch.noSmooth()
       sketch.frameRate(60)
-      world = new World(sketch)
-      world.initFood()
-      world.spawnCreatures()
+      world.value = new World(sketch)
+      world.value.initFood()
+      world.value.spawnCreatures()
     }
 
     sketch.draw = (): void => {
+      if (world.value === null) {
+        return
+      }
+
       sketch.background('#9A6348')
-      world.draw()
-      world.update()
+      world.value.draw()
+      world.value.update()
     }
   }, document.getElementById('simulator') ?? document.body)
 })
@@ -31,7 +40,7 @@ onMounted(() => {
     <section class="right"></section>
     <section class="top"></section>
     <section id="simulator" class="simulator"></section>
-    <section class="bottom"></section>
+    <section class="bottom">{{ world?.stats }}<Statistics :stats="stats"></Statistics></section>
   </main>
 </template>
 

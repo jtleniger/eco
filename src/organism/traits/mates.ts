@@ -1,5 +1,5 @@
-import p5 from 'p5'
-import World from '../../world'
+import type p5 from 'p5'
+import type World from '../../world'
 import { GeneType } from '../genetics/genes/geneType'
 import type Organism from '../organism'
 import State from '../state'

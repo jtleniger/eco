@@ -1,11 +1,11 @@
-import p5 from 'p5'
-import { DNA } from './genetics/dna'
-import Health from './traits/health'
-import State from './state'
-import Eats from './traits/eats'
-import Mates from './traits/mates'
-import Rests from './traits/rests'
-import World from '../world'
+import type p5 from 'p5'
+import type { DNA } from './genetics/dna'
+import type Health from './traits/health'
+import type State from './state'
+import type Eats from './traits/eats'
+import type Mates from './traits/mates'
+import type Rests from './traits/rests'
+import type World from '../world'
 
 export default interface Organism {
   world: World

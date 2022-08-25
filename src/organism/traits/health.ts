@@ -1,5 +1,5 @@
 import { Clock } from '../../utilities'
-import World from '../../world'
+import type World from '../../world'
 import { GeneType } from '../genetics/genes/geneType'
 import type Organism from '../organism'
 
