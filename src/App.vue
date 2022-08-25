@@ -5,7 +5,7 @@ import p5 from 'p5'
 import Statistics from './components/Statistics.vue'
 
 let world: World
-let stats = ref<Map<string, number>>(new Map())
+let stats = ref<IterableIterator<[string, number]>>(new Map().entries())
 
 onMounted(() => {
   new p5((sketch: p5): void => {
@@ -16,7 +16,9 @@ onMounted(() => {
       world = new World(sketch)
       world.initFood()
       world.spawnCreatures()
-      world.registerOnTick(() => (stats.value = world.stats))
+      world.registerOnTick(() => {
+        stats.value = world.stats.entries()
+      })
     }
 
     sketch.draw = (): void => {
@@ -46,6 +48,7 @@ onMounted(() => {
 * {
   box-sizing: border-box;
   font-family: Arial, Helvetica, sans-serif;
+  color: #f5edba;
 }
 
 body {
