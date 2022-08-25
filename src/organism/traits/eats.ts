@@ -3,9 +3,9 @@ import Food from '../../food'
 import { Clock } from '../../utilities'
 import World from '../../world'
 import { GeneType } from '../genetics/genes/geneType'
-import Organism from '../organism'
+import type Organism from '../organism'
 import State from '../state'
-import Drive from './drive'
+import type Drive from './drive'
 
 class Eats implements Drive {
   private readonly world: World

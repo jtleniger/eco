@@ -7,7 +7,7 @@ import Mates from './traits/mates'
 import Rests from './traits/rests'
 import World from '../world'
 
-interface Organism {
+export default interface Organism {
   world: World
   pos: p5.Vector
   state: Set<State>
@@ -19,5 +19,3 @@ interface Organism {
   eats: Eats
   generation: number
 }
-
-export default Organism

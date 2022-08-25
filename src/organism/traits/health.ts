@@ -1,7 +1,7 @@
 import { Clock } from '../../utilities'
 import World from '../../world'
 import { GeneType } from '../genetics/genes/geneType'
-import Organism from '../organism'
+import type Organism from '../organism'
 
 class Health {
   age: number = 0

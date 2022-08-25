@@ -1,13 +1,22 @@
 {
+  "extends": "@vue/tsconfig/tsconfig.web.json",
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
   "compilerOptions": {
-    "outDir": "./dist/",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "jsx": "preserve",
     "noImplicitAny": true,
     "module": "es6",
-    "target": "es5",
-    "allowJs": true,
-    "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "strictNullChecks": true,
     "strict": true
-  }
+  },
+
+  "references": [
+    {
+      "path": "./tsconfig.config.json"
+    }
+  ]
 }

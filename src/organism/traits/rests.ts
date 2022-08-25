@@ -1,9 +1,9 @@
 import p5 from 'p5'
 import { Clock } from '../../utilities'
 import { GeneType } from '../genetics/genes/geneType'
-import Organism from '../organism'
+import type Organism from '../organism'
 import State from '../state'
-import Drive from './drive'
+import type Drive from './drive'
 
 class Rests implements Drive {
   private readonly organism: Organism

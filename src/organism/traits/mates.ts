@@ -1,9 +1,9 @@
 import p5 from 'p5'
 import World from '../../world'
 import { GeneType } from '../genetics/genes/geneType'
-import Organism from '../organism'
+import type Organism from '../organism'
 import State from '../state'
-import Drive from './drive'
+import type Drive from './drive'
 
 class Mates implements Drive {
   private readonly pos: p5.Vector
