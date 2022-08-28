@@ -1,14 +1,18 @@
 import type p5 from 'p5'
 import type Speed from './speed'
 
-function RandomInt(low: number, high: number): number {
+export function RandomInt(low: number, high: number): number {
   const range = high - low
 
   return low + Math.round(Math.random() * range)
 }
 
-function RandomSketchPos(sketch: p5): p5.Vector {
+export function RandomSketchPos(sketch: p5): p5.Vector {
   return sketch.createVector(sketch.random(sketch.width), sketch.random(sketch.height))
+}
+
+export function EnumEntries(e: { [id: number]: string }): string[] {
+  return Object.keys(e).filter((key) => isNaN(Number(key)))
 }
 
 export class Clock {
@@ -34,5 +38,3 @@ export class Clock {
     Clock.frame = frame
   }
 }
-
-export { RandomSketchPos, RandomInt }

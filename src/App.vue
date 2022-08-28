@@ -5,15 +5,17 @@ import p5 from 'p5'
 import Statistics from './components/Statistics.vue'
 import Stats from './stats'
 import Controls from './components/Controls.vue'
-import Genetics from './components/Genetics.vue'
-import type { OrganismType } from './organism/organismType'
+import GeneticsEditor from './components/GeneticsEditor.vue'
+import { OrganismType } from './organism/organismType'
 import { DNA } from './organism/genetics/dna'
+import EditButtons from './components/EditButtons.vue'
 
 let world: World
 let stats = reactive(new Stats())
 let sketch: p5
 let running = ref(false)
 let showGenetics = ref(false)
+let editingOrganism = ref(OrganismType.Prey)
 
 const toggleRunning = () => {
   running.value = !running.value
@@ -28,18 +30,27 @@ const reset = () => {
   world.spawnCreatures()
 }
 
+const edit = (organism: OrganismType) => {
+  showGenetics.value = true
+  editingOrganism.value = organism
+  console.log(`organism value in app ${editingOrganism.value}`)
+}
+
 const genesSaved = (
-  organism: OrganismType,
   data: Map<string, { min: number; max: number; spawnMin: number; spawnMax: number }>
 ) => {
   stats.clear()
   running.value = false
   world = new World(sketch, stats)
   const dna = DNA.fromMap(data, world)
-  world.userDna.set(organism, dna)
+  world.userDna.set(editingOrganism.value, dna)
   showGenetics.value = false
   world.initFood()
   world.spawnCreatures()
+}
+
+const genesClosed = () => {
+  showGenetics.value = false
 }
 
 onMounted(() => {
@@ -72,10 +83,15 @@ onMounted(() => {
 
 <template>
   <main>
-    <Genetics :visible="showGenetics" @set-genes="genesSaved"></Genetics>
+    <GeneticsEditor
+      :visible="showGenetics"
+      :organism="editingOrganism"
+      @saved="genesSaved"
+      @close="genesClosed"
+    ></GeneticsEditor>
     <section class="left">
       <Controls @reset="reset" @toggle-running="toggleRunning" :running="running"></Controls>
-      <button @click="showGenetics = true">edit frog dna</button>
+      <EditButtons @edit="edit"></EditButtons>
     </section>
     <section class="right"></section>
     <section class="top"></section>

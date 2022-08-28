@@ -2,39 +2,50 @@
 import { GeneName, GeneType } from '@/organism/genetics/genes/geneType'
 import { forOrganism } from '@/organism/genetics/genes/metadata'
 import { OrganismType, OrganismName } from '@/organism/organismType'
-import { computed, reactive } from 'vue'
+import { ref, watch } from 'vue'
 import Dialog from './Dialog.vue'
+import { EnumEntries } from '../utilities'
 
 const props = defineProps<{
   visible: boolean
+  organism: OrganismType
 }>()
 
-const emit = defineEmits(['setGenes'])
+const emit = defineEmits(['saved', 'close'])
 
 type GeneTypeStrings = keyof typeof GeneType
 
-const organism: OrganismType = OrganismType.Prey
-
-const metadata = forOrganism(organism)
-
-const data = reactive(
-  new Map(
-    Object.keys(GeneType)
-      .filter((key) => isNaN(Number(key)))
-      .map((k) => {
-        const key = k as GeneTypeStrings
-        return [key, { key, name: GeneName.get(GeneType[key]), ...metadata.get(GeneType[key]) }]
-      })
-  )
+watch(
+  () => props.organism,
+  (_organism, _) => {
+    data.value = initData()
+  }
 )
 
+const initData = () =>
+  new Map(
+    EnumEntries(GeneType).map((k) => {
+      const key = k as GeneTypeStrings
+      return [
+        key,
+        {
+          key,
+          name: GeneName.get(GeneType[key]),
+          ...forOrganism(props.organism).get(GeneType[key]),
+        },
+      ]
+    })
+  )
+
+const data = ref(initData())
+
 const saveAndReset = () => {
-  emit('setGenes', organism, data)
+  emit('saved', data)
 }
 </script>
 
 <template>
-  <Dialog :visible="visible">
+  <Dialog :visible="visible" @close="$emit('close')">
     <h1>editing genetics for {{ OrganismName.get(organism) }}</h1>
     <table class="genes">
       <thead>

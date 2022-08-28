@@ -37,6 +37,25 @@ export function forOrganism(type: OrganismType): Map<GeneType, Metadata> {
         [GeneType.MaxAge, new Metadata(GeneType.MaxAge, 50, 300, 70, 150)],
         [GeneType.MaxStarvation, new Metadata(GeneType.MaxStarvation, 5, 50, 10, 30)],
       ])
+
+    case OrganismType.Bird:
+      return new Map([
+        [GeneType.FoodValue, new Metadata(GeneType.FoodValue, 0, 0, 0, 0)],
+        [GeneType.Full, new Metadata(GeneType.Full, 0, 0, 0, 0)],
+        [GeneType.HuntRange, new Metadata(GeneType.HuntRange, 0, 0, 0, 0)],
+        [GeneType.MateRange, new Metadata(GeneType.MateRange, 0, 0, 0, 0)],
+        [GeneType.MateCooldown, new Metadata(GeneType.MateCooldown, 0, 0, 0, 0)],
+        [
+          GeneType.MinFedPercentageToMate,
+          new Metadata(GeneType.MinFedPercentageToMate, 0, 0, 0, 0),
+        ],
+        [GeneType.MinAgeToMate, new Metadata(GeneType.MinAgeToMate, 0, 0, 0, 0)],
+        [GeneType.MaxAgeToMate, new Metadata(GeneType.MaxAgeToMate, 0, 0, 0, 0)],
+        [GeneType.MaxEnergy, new Metadata(GeneType.MaxEnergy, 0, 0, 0, 0)],
+        [GeneType.RestTime, new Metadata(GeneType.RestTime, 0, 0, 0, 0)],
+        [GeneType.MaxAge, new Metadata(GeneType.MaxAge, 0, 0, 0, 0)],
+        [GeneType.MaxStarvation, new Metadata(GeneType.MaxStarvation, 0, 0, 0, 0)],
+      ])
     default:
       throw Error(`${type} has no DNA metadata defined`)
   }

@@ -35,6 +35,6 @@ h1 {
 }
 
 button {
-  width: 30%;
+  width: 40%;
 }
 </style>
