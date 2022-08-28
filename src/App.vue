@@ -3,10 +3,9 @@ import { onMounted, reactive, ref } from 'vue'
 import World from './world'
 import p5 from 'p5'
 import Statistics from './components/Statistics.vue'
-import Genetics from './components/Genetics.vue'
 import Stats from './stats'
-import Dialog from './components/Dialog.vue'
 import Controls from './components/Controls.vue'
+import Genetics from './components/Genetics.vue'
 
 let world: World
 let stats = reactive(new Stats())
@@ -56,6 +55,7 @@ onMounted(() => {
 
 <template>
   <main>
+    <Genetics></Genetics>
     <section class="left">
       <Controls @reset="reset" @toggle-running="toggleRunning" :running="running"></Controls>
     </section>
@@ -129,12 +129,17 @@ main {
   display: block;
 }
 
-button {
+button,
+input {
   background-color: #1f0e1c;
   border: none;
   color: #8c8fae;
   margin: 0.25em;
-  padding: 0.4em;
+  padding: 0.5em;
+  border-radius: 3px;
+}
+
+button {
   cursor: pointer;
 }
 </style>

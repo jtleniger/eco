@@ -6,7 +6,9 @@ const props = defineProps<{
 
 <template>
   <div :class="{ visible }">
-    <section>foobar</section>
+    <section>
+      <slot></slot>
+    </section>
   </div>
 </template>
 

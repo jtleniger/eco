@@ -1,4 +1,4 @@
-export const enum GeneType {
+export enum GeneType {
   FoodValue,
   Full,
   HuntRange,
@@ -19,9 +19,9 @@ export const GeneName: Map<GeneType, String> = new Map([
   [GeneType.HuntRange, 'hunt range'],
   [GeneType.MateRange, 'mating range'],
   [GeneType.MateCooldown, 'mating cooldown'],
-  [GeneType.MinFedPercentageToMate, 'minFedToMate'],
-  [GeneType.MinAgeToMate, 'minAgeToMate'],
-  [GeneType.MaxAgeToMate, 'maxAgeToMate'],
+  [GeneType.MinFedPercentageToMate, 'min fed to mate'],
+  [GeneType.MinAgeToMate, 'min age to mate'],
+  [GeneType.MaxAgeToMate, 'max age to mate'],
   [GeneType.MaxEnergy, 'max energy'],
   [GeneType.RestTime, 'rest time'],
   [GeneType.MaxAge, 'max age'],

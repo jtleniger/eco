@@ -1,4 +1,4 @@
-import p5 from 'p5'
+import type p5 from 'p5'
 
 abstract class Sprite {
   img: p5.Image | null = null
