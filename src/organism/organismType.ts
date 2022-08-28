@@ -1,9 +1,9 @@
 export enum OrganismType {
-  Prey,
+  Frog,
   Bird,
 }
 
 export const OrganismName: Map<OrganismType, String> = new Map([
-  [OrganismType.Prey, 'frog'],
+  [OrganismType.Frog, 'frog'],
   [OrganismType.Bird, 'bird'],
 ])

@@ -10,9 +10,9 @@ import Mates from './traits/mates'
 import type Organism from './organism'
 import Health from './traits/health'
 
-class Prey extends Sprite implements Organism {
+class Predator extends Sprite implements Organism {
   get imgPath(): string {
-    return 'assets/frog.png'
+    return 'assets/bird.png'
   }
 
   scale: number = 2
@@ -37,7 +37,7 @@ class Prey extends Sprite implements Organism {
     if (dna !== undefined) {
       this.dna = dna
     } else {
-      this.dna = DNA.Default(typeof Prey, this.world)
+      this.dna = DNA.Default(typeof Predator, this.world)
     }
 
     if (generation !== undefined) {
@@ -68,7 +68,7 @@ class Prey extends Sprite implements Organism {
   }
 
   die(reason: string): void {
-    this.world.kill(this, reason)
+    // this.world.kill(this, reason)
   }
 
   debug(): void {
@@ -155,4 +155,4 @@ class Prey extends Sprite implements Organism {
   }
 }
 
-export default Prey
+export default Predator

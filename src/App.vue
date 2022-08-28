@@ -15,7 +15,7 @@ let stats = reactive(new Stats())
 let sketch: p5
 let running = ref(false)
 let showGenetics = ref(false)
-let editingOrganism = ref(OrganismType.Prey)
+let editingOrganism = ref(OrganismType.Frog)
 
 const toggleRunning = () => {
   running.value = !running.value
@@ -27,13 +27,13 @@ const reset = () => {
   running.value = false
   world = new World(sketch, stats)
   world.initFood()
-  world.spawnCreatures()
+  world.spawnFrogs()
+  world.spawnBirds()
 }
 
 const edit = (organism: OrganismType) => {
   showGenetics.value = true
   editingOrganism.value = organism
-  console.log(`organism value in app ${editingOrganism.value}`)
 }
 
 const genesSaved = (
@@ -46,7 +46,8 @@ const genesSaved = (
   world.userDna.set(editingOrganism.value, dna)
   showGenetics.value = false
   world.initFood()
-  world.spawnCreatures()
+  world.spawnFrogs()
+  world.spawnBirds()
 }
 
 const genesClosed = () => {

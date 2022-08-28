@@ -106,7 +106,7 @@ class Mates implements Drive {
       this.organism.rests.start()
       m.rests.start()
 
-      this.world.addCreature(
+      this.world.addPrey(
         this.pos.copy(),
         this.organism.dna.mix(m.dna),
         this.organism.generation + 1
@@ -122,7 +122,7 @@ class Mates implements Drive {
     let minDistance = Infinity
     let creature = null
 
-    this.world.prey.forEach((m) => {
+    this.world.frogs.forEach((m) => {
       if (m.mates === this) {
         return
       }

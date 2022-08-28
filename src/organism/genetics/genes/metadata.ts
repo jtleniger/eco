@@ -19,7 +19,7 @@ export default class Metadata {
 
 export function forOrganism(type: OrganismType): Map<GeneType, Metadata> {
   switch (type) {
-    case OrganismType.Prey:
+    case OrganismType.Frog:
       return new Map([
         [GeneType.FoodValue, new Metadata(GeneType.FoodValue, 1, 20, 5, 15)],
         [GeneType.Full, new Metadata(GeneType.Full, 20, 200, 30, 90)],
