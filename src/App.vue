@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import World from './world'
 import p5 from 'p5'
 import Statistics from './components/Statistics.vue'
+import Genetics from './components/Genetics.vue'
+import Stats from './stats'
+import Dialog from './components/Dialog.vue'
+import Controls from './components/Controls.vue'
 
 let world: World
-let stats = ref<IterableIterator<[string, number]>>(new Map().entries())
+let stats = reactive(new Stats())
 
 onMounted(() => {
   new p5((sketch: p5): void => {
@@ -13,12 +17,9 @@ onMounted(() => {
       sketch.createCanvas(sketch.windowWidth - 410, sketch.windowHeight - 210)
       sketch.noSmooth()
       sketch.frameRate(60)
-      world = new World(sketch)
+      world = new World(sketch, stats)
       world.initFood()
       world.spawnCreatures()
-      world.registerOnTick(() => {
-        stats.value = world.stats.entries()
-      })
     }
 
     sketch.draw = (): void => {
@@ -36,7 +37,7 @@ onMounted(() => {
 
 <template>
   <main>
-    <section class="left"></section>
+    <section class="left"><Controls></Controls></section>
     <section class="right"></section>
     <section class="top"></section>
     <section id="simulator" class="simulator"></section>
@@ -60,6 +61,13 @@ main {
   display: grid;
   grid-template-columns: 200px 1fr 200px;
   grid-template-rows: 100px 1fr 100px;
+}
+
+.left,
+.right,
+.top,
+.bottom {
+  padding: 0.5em;
 }
 
 .left,

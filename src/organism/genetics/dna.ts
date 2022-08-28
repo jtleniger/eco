@@ -2,7 +2,7 @@ import { RandomInt } from '../../utilities'
 import Prey from '../prey'
 import { GeneType, GeneName } from './genes/geneType'
 import Gene from './genes/gene'
-import World from '../../world'
+import type World from '../../world'
 
 export class DNA {
   genes: Map<GeneType, Gene>

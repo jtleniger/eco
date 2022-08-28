@@ -1,6 +1,8 @@
 <script lang="ts" setup>
+import type Stats from '@/stats'
+
 const props = defineProps<{
-  stats: IterableIterator<[string, number]>
+  stats: Stats
 }>()
 </script>
 
@@ -8,7 +10,7 @@ const props = defineProps<{
   <section>
     <h1>statistics</h1>
     <div class="statistics">
-      <div v-for="[v, k] in stats">{{ v }}: {{ k }}</div>
+      <div v-for="[v, k] in stats.iterator">{{ v }}: {{ k }}</div>
     </div>
   </section>
 </template>
@@ -19,7 +21,6 @@ section {
   grid-template-rows: 25px 1fr;
   grid-template-columns: repeat(5, 1fr);
   height: 100%;
-  padding: 0.5rem;
 }
 
 h1 {

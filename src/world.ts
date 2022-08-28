@@ -3,6 +3,7 @@ import Food from './food'
 import type { DNA } from './organism/genetics/dna'
 import Prey from './organism/prey'
 import Speed from './speed'
+import type Stats from './stats'
 import { Clock } from './utilities'
 
 class World {
@@ -13,26 +14,16 @@ class World {
   foodTimer: number | null = null
   prey: Prey[]
   frames: number = 0
-  stats: Map<string, number> = new Map()
   speed: Speed = new Speed()
   foodClock: Clock
-  onTickClock: Clock
-  onTicks: (() => void)[]
+  stats: Stats
 
-  constructor(sketch: p5) {
+  constructor(sketch: p5, stats: Stats) {
     this.food = []
     this.prey = []
     this.sketch = sketch
-    this.stats.set('born', 0)
     this.foodClock = new Clock(this.speed, this.growFood.bind(this), 0.4)
-    this.onTicks = []
-    this.onTickClock = new Clock(this.speed, () => {
-      this.onTicks.forEach((o) => o())
-    })
-  }
-
-  registerOnTick(callback: () => void): void {
-    this.onTicks.push(callback)
+    this.stats = stats
   }
 
   initFood(): void {
@@ -55,12 +46,7 @@ class World {
 
     this.prey.splice(index, 1)
 
-    if (!this.stats.has(reason)) {
-      this.stats.set(reason, 1)
-    } else {
-      const prev = this.stats.get(reason) as number
-      this.stats.set(reason, prev + 1)
-    }
+    this.stats.increment(reason)
   }
 
   spawnCreatures(): void {
@@ -76,8 +62,7 @@ class World {
 
   addCreature(pos: p5.Vector, dna?: DNA, generation?: number): void {
     this.prey.push(new Prey(this.sketch, this, pos, dna, generation))
-    const prev = this.stats.get('born') as number
-    this.stats.set('born', prev + 1)
+    this.stats.increment('born')
   }
 
   draw(): void {
@@ -90,7 +75,6 @@ class World {
 
     Clock.setFrames(this.sketch.frameCount)
     this.foodClock.update()
-    this.onTickClock.update()
 
     this.prey.forEach((c) => c.update())
 

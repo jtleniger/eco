@@ -1,5 +1,5 @@
-import p5 from 'p5'
-import Speed from './speed'
+import type p5 from 'p5'
+import type Speed from './speed'
 
 function RandomInt(low: number, high: number): number {
   const range = high - low

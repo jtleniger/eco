@@ -1,4 +1,4 @@
-import World from '../../../world'
+import type World from '../../../world'
 
 export default class Gene {
   value: number
@@ -20,13 +20,7 @@ export default class Gene {
     let newValue = useThis ? this.value : other.value
 
     if (mutate) {
-      if (!this.world.stats.has('mutations')) {
-        this.world.stats.set('mutations', 1)
-      } else {
-        const old = this.world.stats.get('mutations') as number
-
-        this.world.stats.set('mutations', old + 1)
-      }
+      this.world.stats.increment('mutations')
 
       const positive = Math.random() > 0.5
       const magnitude = Math.pow(Math.random(), 2)
