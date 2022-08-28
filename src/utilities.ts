@@ -25,7 +25,7 @@ export class Clock {
   }
 
   update(): void {
-    if (Clock.frame % this.interval === 0) {
+    if (Clock.frame % this.interval === 0 && this.speed.running) {
       this.onTick()
     }
   }

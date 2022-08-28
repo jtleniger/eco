@@ -10,25 +10,44 @@ import Controls from './components/Controls.vue'
 
 let world: World
 let stats = reactive(new Stats())
+let sketch: p5
+let running = ref(false)
+
+const toggleRunning = () => {
+  running.value = !running.value
+  world.speed.setRunning(running.value)
+}
+
+const reset = () => {
+  stats.clear()
+  running.value = false
+  world = new World(sketch, stats)
+  world.initFood()
+  world.spawnCreatures()
+}
 
 onMounted(() => {
-  new p5((sketch: p5): void => {
-    sketch.setup = (): void => {
-      sketch.createCanvas(sketch.windowWidth - 410, sketch.windowHeight - 210)
-      sketch.noSmooth()
-      sketch.frameRate(60)
-      world = new World(sketch, stats)
-      world.initFood()
-      world.spawnCreatures()
+  new p5((s: p5): void => {
+    sketch = s
+    s.setup = (): void => {
+      s.createCanvas(s.windowWidth - 410, s.windowHeight - 210)
+      s.noSmooth()
+      s.frameRate(60)
+      reset()
     }
 
-    sketch.draw = (): void => {
+    s.draw = (): void => {
       if (world === null) {
         return
       }
 
-      sketch.background('#9A6348')
+      s.background('#9A6348')
       world.draw()
+
+      if (!world.speed.running) {
+        return
+      }
+
       world.update()
     }
   }, document.getElementById('simulator') ?? document.body)
@@ -37,7 +56,9 @@ onMounted(() => {
 
 <template>
   <main>
-    <section class="left"><Controls></Controls></section>
+    <section class="left">
+      <Controls @reset="reset" @toggle-running="toggleRunning" :running="running"></Controls>
+    </section>
     <section class="right"></section>
     <section class="top"></section>
     <section id="simulator" class="simulator"></section>
@@ -106,5 +127,14 @@ main {
 
 .simulator canvas {
   display: block;
+}
+
+button {
+  background-color: #1f0e1c;
+  border: none;
+  color: #8c8fae;
+  margin: 0.25em;
+  padding: 0.4em;
+  cursor: pointer;
 }
 </style>

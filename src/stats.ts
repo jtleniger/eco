@@ -19,6 +19,10 @@ export default class Stats {
     this._stats.set(key, value)
   }
 
+  clear(): void {
+    this._stats = new Map()
+  }
+
   get iterator(): IterableIterator<[string, number]> {
     return this._stats.entries()
   }
