@@ -49,8 +49,11 @@ class Rests implements Drive {
     this._direction = p5.Vector.random2D()
   }
 
-  toString(): string {
-    return `energy: ${this.energy}\nremaining rest: ${this.remaining}\n`
+  get stats(): [string, number][] {
+    return [
+      ['energy', this.energy],
+      ['remaining rest', this.remaining],
+    ]
   }
 
   private decRest(): void {

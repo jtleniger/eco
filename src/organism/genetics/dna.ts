@@ -1,5 +1,5 @@
 import { RandomInt } from '../../utilities'
-import Prey from '../prey'
+import Frog from '../frog'
 import { GeneType, GeneName } from './genes/geneType'
 import Gene from './genes/gene'
 import type World from '../../world'
@@ -64,7 +64,7 @@ export class DNA {
 
   static Default(type: string, world: World): DNA {
     switch (type) {
-      case typeof Prey:
+      case typeof Frog:
         return new DNA(
           new Map([
             [GeneType.FoodValue, new Gene(RandomInt(5, 15), 1, 20, world)],

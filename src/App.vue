@@ -26,7 +26,7 @@ const reset = () => {
   stats.clear()
   running.value = false
   world = new World(sketch, stats)
-  world.initFood()
+  world.initBugs()
   world.spawnFrogs()
   world.spawnBirds()
 }
@@ -45,7 +45,7 @@ const genesSaved = (
   const dna = DNA.fromMap(data, world)
   world.userDna.set(editingOrganism.value, dna)
   showGenetics.value = false
-  world.initFood()
+  world.initBugs()
   world.spawnFrogs()
   world.spawnBirds()
 }

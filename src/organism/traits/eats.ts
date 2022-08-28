@@ -1,5 +1,5 @@
+import type Edible from '@/edible'
 import type p5 from 'p5'
-import type Food from '../../food'
 import { Clock } from '../../utilities'
 import type World from '../../world'
 import { GeneType } from '../genetics/genes/geneType'
@@ -7,19 +7,20 @@ import type Organism from '../organism'
 import State from '../state'
 import type Drive from './drive'
 
-class Eats implements Drive {
+class Eats<Food extends Edible> implements Drive {
   private readonly world: World
   private readonly pos: p5.Vector
   private readonly state: Set<State>
   private readonly organism: Organism
   private readonly clock: Clock
+  private readonly food: Food[]
 
   fed: number
 
   private nearbyFood: Food | null = null
   private _direction: p5.Vector | null = null
 
-  constructor(organism: Organism) {
+  constructor(organism: Organism, food: Food[]) {
     this.organism = organism
     this.pos = this.organism.pos
     this._direction = null
@@ -27,6 +28,7 @@ class Eats implements Drive {
     this.fed = Math.round(this.organism.dna.getValue(GeneType.Full) / 2)
     this.world = this.organism.world
     this.clock = new Clock(this.world.speed, this.decFed.bind(this))
+    this.food = food
   }
 
   direction = (): p5.Vector | null => {
@@ -65,8 +67,8 @@ class Eats implements Drive {
     this._direction = this.nearbyFood.pos.copy().sub(this.pos).normalize()
   }
 
-  toString(): string {
-    return `fed: ${this.fed}\n`
+  get stats(): [string, number][] {
+    return [['fed', this.fed]]
   }
 
   private decFed(): void {
@@ -114,7 +116,7 @@ class Eats implements Drive {
     let minDistance = Infinity
     let food = null
 
-    this.world.food.forEach((f) => {
+    this.food.forEach((f) => {
       if (f.eaten) {
         return
       }

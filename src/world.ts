@@ -1,21 +1,22 @@
 import type p5 from 'p5'
-import Food from './food'
+import Bug from './bug'
 import type { DNA } from './organism/genetics/dna'
 import { OrganismType } from './organism/organismType'
-import Predator from './organism/predator'
-import Prey from './organism/prey'
+import Bird from './organism/bird'
+import Frog from './organism/frog'
 import Speed from './speed'
 import type Stats from './stats'
 import { Clock } from './utilities'
+import type Edible from './edible'
 
 class World {
   private static readonly MAX_FOOD: number = 50
 
   sketch: p5
-  food: Food[]
+  bugs: Bug[]
   foodTimer: number | null = null
-  frogs: Prey[]
-  birds: Predator[]
+  frogs: Frog[]
+  birds: Bird[]
   frames: number = 0
   speed: Speed = new Speed()
   foodClock: Clock
@@ -23,7 +24,7 @@ class World {
   userDna: Map<OrganismType, DNA> = new Map()
 
   constructor(sketch: p5, stats: Stats) {
-    this.food = []
+    this.bugs = []
     this.frogs = []
     this.birds = []
     this.sketch = sketch
@@ -31,22 +32,22 @@ class World {
     this.stats = stats
   }
 
-  initFood(): void {
+  initBugs(): void {
     for (let i = 0; i < World.MAX_FOOD; i++) {
-      const f = new Food(this.sketch)
-      this.food.push(f)
+      const f = new Bug(this.sketch)
+      this.bugs.push(f)
     }
   }
 
   growFood(): void {
-    const f = this.food.find((f) => f.eaten)
+    const f = this.bugs.find((f) => f.eaten)
 
     if (f !== undefined) {
       f.reset()
     }
   }
 
-  kill(creature: Prey, reason: string): void {
+  kill(creature: Frog, reason: string): void {
     const index = this.frogs.indexOf(creature)
 
     this.frogs.splice(index, 1)
@@ -77,17 +78,17 @@ class World {
   }
 
   addPrey(pos: p5.Vector, dna?: DNA, generation?: number): void {
-    this.frogs.push(new Prey(this.sketch, this, pos, dna, generation))
+    this.frogs.push(new Frog(this.sketch, this, pos, dna, generation))
     this.stats.increment('born')
   }
 
   addPredator(pos: p5.Vector, dna?: DNA, generation?: number): void {
-    this.birds.push(new Predator(this.sketch, this, pos, dna, generation))
+    this.birds.push(new Bird(this.sketch, this, pos, dna, generation))
     this.stats.increment('born')
   }
 
   draw(): void {
-    this.food.forEach((f) => f.draw())
+    this.bugs.forEach((f) => f.draw())
     this.frogs.forEach((c) => c.draw())
     this.birds.forEach((c) => c.draw())
   }

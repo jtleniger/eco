@@ -41,8 +41,11 @@ class Health {
     this.starvation = 0
   }
 
-  toString(): string {
-    return `age: ${this.age}\nstarvation:${this.starvation}\n`
+  get stats(): [string, number][] {
+    return [
+      ['age', this.age],
+      ['starvation', this.starvation],
+    ]
   }
 }
 
