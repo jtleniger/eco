@@ -11,6 +11,7 @@ import type Organism from './organism'
 import Health from './traits/health'
 import type Frog from './frog'
 import type MatesAndEats from './matesAndEats'
+import { OrganismType } from './organismType'
 
 class Bird extends Sprite implements MatesAndEats<Frog> {
   get imgPath(): string {
@@ -39,7 +40,7 @@ class Bird extends Sprite implements MatesAndEats<Frog> {
     if (dna !== undefined) {
       this.dna = dna
     } else {
-      this.dna = DNA.Default(typeof Bird, this.world)
+      this.dna = DNA.Default(OrganismType.Bird, this.world)
     }
 
     if (generation !== undefined) {

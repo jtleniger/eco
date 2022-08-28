@@ -11,6 +11,7 @@ import type Organism from './organism'
 import Health from './traits/health'
 import type Edible from '@/edible'
 import type Bug from '@/bug'
+import { OrganismType } from './organismType'
 
 class Frog extends Sprite implements Organism, Edible {
   get imgPath(): string {
@@ -40,7 +41,7 @@ class Frog extends Sprite implements Organism, Edible {
     if (dna !== undefined) {
       this.dna = dna
     } else {
-      this.dna = DNA.Default(typeof Frog, this.world)
+      this.dna = DNA.Default(OrganismType.Frog, this.world)
     }
 
     if (generation !== undefined) {
