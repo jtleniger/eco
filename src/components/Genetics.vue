@@ -5,18 +5,15 @@ import { OrganismType, OrganismName } from '@/organism/organismType'
 import { computed, reactive } from 'vue'
 import Dialog from './Dialog.vue'
 
+const props = defineProps<{
+  visible: boolean
+}>()
+
+const emit = defineEmits(['setGenes'])
+
 type GeneTypeStrings = keyof typeof GeneType
 
 const organism: OrganismType = OrganismType.Prey
-
-const genes = computed(() => {
-  return Object.keys(GeneType)
-    .filter((key) => isNaN(Number(key)))
-    .map((k) => {
-      const key = k as GeneTypeStrings
-      return { key, name: GeneName.get(GeneType[key]), type: GeneType[key] }
-    })
-})
 
 const metadata = forOrganism(organism)
 
@@ -32,12 +29,12 @@ const data = reactive(
 )
 
 const saveAndReset = () => {
-  console.log(data)
+  emit('setGenes', organism, data)
 }
 </script>
 
 <template>
-  <Dialog :visible="true">
+  <Dialog :visible="visible">
     <h1>editing genetics for {{ OrganismName.get(organism) }}</h1>
     <table class="genes">
       <thead>

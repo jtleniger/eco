@@ -14,13 +14,21 @@ let toggleRunning = (): void => {
 
 <template>
   <section>
-    <button @click="toggleRunning">{{ running ? 'stop' : 'start' }}</button>
-    <button @click="$emit('reset')">reset</button>
+    <h1>controls</h1>
+    <div class="controls">
+      <button @click="toggleRunning">{{ running ? 'stop' : 'start' }}</button>
+      <button @click="$emit('reset')">reset</button>
+    </div>
   </section>
 </template>
 
 <style scoped>
-section {
+h1 {
+  text-align: center;
+  margin: 0.5em;
+}
+
+.controls {
   display: flex;
   justify-content: space-around;
   width: 100%;

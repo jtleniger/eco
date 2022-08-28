@@ -6,11 +6,14 @@ import Statistics from './components/Statistics.vue'
 import Stats from './stats'
 import Controls from './components/Controls.vue'
 import Genetics from './components/Genetics.vue'
+import type { OrganismType } from './organism/organismType'
+import { DNA } from './organism/genetics/dna'
 
 let world: World
 let stats = reactive(new Stats())
 let sketch: p5
 let running = ref(false)
+let showGenetics = ref(false)
 
 const toggleRunning = () => {
   running.value = !running.value
@@ -21,6 +24,20 @@ const reset = () => {
   stats.clear()
   running.value = false
   world = new World(sketch, stats)
+  world.initFood()
+  world.spawnCreatures()
+}
+
+const genesSaved = (
+  organism: OrganismType,
+  data: Map<string, { min: number; max: number; spawnMin: number; spawnMax: number }>
+) => {
+  stats.clear()
+  running.value = false
+  world = new World(sketch, stats)
+  const dna = DNA.fromMap(data, world)
+  world.userDna.set(organism, dna)
+  showGenetics.value = false
   world.initFood()
   world.spawnCreatures()
 }
@@ -55,9 +72,10 @@ onMounted(() => {
 
 <template>
   <main>
-    <Genetics></Genetics>
+    <Genetics :visible="showGenetics" @set-genes="genesSaved"></Genetics>
     <section class="left">
       <Controls @reset="reset" @toggle-running="toggleRunning" :running="running"></Controls>
+      <button @click="showGenetics = true">edit frog dna</button>
     </section>
     <section class="right"></section>
     <section class="top"></section>
@@ -141,5 +159,15 @@ input {
 
 button {
   cursor: pointer;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
 }
 </style>

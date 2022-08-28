@@ -1,6 +1,7 @@
 import type p5 from 'p5'
 import Food from './food'
 import type { DNA } from './organism/genetics/dna'
+import { OrganismType } from './organism/organismType'
 import Prey from './organism/prey'
 import Speed from './speed'
 import type Stats from './stats'
@@ -17,6 +18,7 @@ class World {
   speed: Speed = new Speed()
   foodClock: Clock
   stats: Stats
+  userDna: Map<OrganismType, DNA> = new Map()
 
   constructor(sketch: p5, stats: Stats) {
     this.food = []
@@ -56,7 +58,7 @@ class World {
         this.sketch.random(this.sketch.height)
       )
 
-      this.addCreature(pos)
+      this.addCreature(pos, this.userDna.get(OrganismType.Prey))
     }
   }
 

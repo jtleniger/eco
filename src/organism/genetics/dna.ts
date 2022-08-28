@@ -44,6 +44,24 @@ export class DNA {
     return res
   }
 
+  static fromMap(
+    data: Map<string, { min: number; max: number; spawnMin: number; spawnMax: number }>,
+    world: World
+  ): DNA {
+    const genes: Map<GeneType, Gene> = new Map()
+
+    type GeneTypeStrings = keyof typeof GeneType
+
+    data.forEach((value, key) => {
+      genes.set(
+        GeneType[key as GeneTypeStrings],
+        new Gene(RandomInt(value.spawnMin, value.spawnMax), value.min, value.max, world)
+      )
+    })
+
+    return new DNA(genes)
+  }
+
   static Default(type: string, world: World): DNA {
     switch (type) {
       case typeof Prey:
