@@ -10,13 +10,12 @@ class Rests implements Drive {
   private readonly state: Set<State>
 
   private energy: number
-  private _direction: p5.Vector | null
+  private _direction: p5.Vector = new p5.Vector()
   private remaining: number
   private readonly restClock: Clock
   private readonly energyClock: Clock
 
   constructor(organism: IOrganism) {
-    this._direction = null
     this.organism = organism
     this.energy = this.organism.dna.getValue(GeneType.MaxEnergy)
     this.state = this.organism.state
@@ -25,9 +24,9 @@ class Rests implements Drive {
     this.energyClock = new Clock(this.organism.world.speed, this.decEnergy.bind(this))
   }
 
-  direction(): p5.Vector | null {
+  direction(): [State, p5.Vector] | null {
     if (!this.state.has(State.Hunting) && !this.state.has(State.Mating)) {
-      return this._direction
+      return [State.None, this._direction]
     }
 
     return null
@@ -41,7 +40,6 @@ class Rests implements Drive {
   start(): void {
     this.remaining = this.organism.dna.getValue(GeneType.RestTime)
     this.state.add(State.Resting)
-    this._direction = null
   }
 
   end(): void {

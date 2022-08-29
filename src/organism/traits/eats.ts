@@ -1,5 +1,5 @@
 import type IEdible from '@/iEdible'
-import type p5 from 'p5'
+import p5 from 'p5'
 import { Clock } from '../../utilities'
 import type World from '../../world'
 import { GeneType } from '../genetics/genes/geneType'
@@ -18,12 +18,12 @@ class Eats implements Drive {
   fed: number
 
   private nearbyFood: IEdible | null = null
-  private _direction: p5.Vector | null = null
+  private _direction: p5.Vector
 
   constructor(organism: IOrganism, food: IEdible[]) {
     this.organism = organism
     this.pos = this.organism.pos
-    this._direction = null
+    this._direction = new p5.Vector()
     this.state = this.organism.state
     this.fed = Math.round(this.organism.dna.getValue(GeneType.Full) / 2)
     this.world = this.organism.world
@@ -31,13 +31,13 @@ class Eats implements Drive {
     this.food = food
   }
 
-  direction = (): p5.Vector | null => {
+  direction = (): [State, p5.Vector] | null => {
     if (
       this.state.has(State.Hunting) &&
       !this.state.has(State.Mating) &&
       !this.state.has(State.Resting)
     ) {
-      return this._direction
+      return [State.Hunting, this._direction]
     }
 
     return null
@@ -64,7 +64,6 @@ class Eats implements Drive {
 
     this.state.add(State.Hunting)
     this.nearbyFood = maybeFood
-    this._direction = this.nearbyFood.pos.copy().sub(this.pos).normalize()
   }
 
   get stats(): [string, number][] {
@@ -90,6 +89,8 @@ class Eats implements Drive {
       return
     }
 
+    this._direction = this.nearbyFood.pos.copy().sub(this.pos).normalize()
+
     if (this.organism.near(this.nearbyFood.pos)) {
       this.eat()
       this.end()
@@ -101,7 +102,7 @@ class Eats implements Drive {
       return
     }
 
-    this.nearbyFood.eaten = true
+    this.nearbyFood.eat()
     this.fed += this.organism.dna.getValue(GeneType.FoodValue)
     this.organism.health.resetStarvation()
 

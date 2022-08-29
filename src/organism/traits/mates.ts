@@ -1,4 +1,4 @@
-import type p5 from 'p5'
+import p5 from 'p5'
 import type World from '../../world'
 import { GeneType } from '../genetics/genes/geneType'
 import type IOrganism from '../iOrganism'
@@ -11,13 +11,13 @@ class Mates implements Drive {
   private readonly state: Set<State>
   private readonly organism: IOrganism
   private readonly mates: IOrganism[]
-  private _direction: p5.Vector | null
+  private _direction: p5.Vector
   private nearbyMate: IOrganism | null = null
   private cooldown: number
 
   constructor(organism: IOrganism, mates: IOrganism[]) {
     this.pos = organism.pos
-    this._direction = null
+    this._direction = new p5.Vector()
     this.state = organism.state
     this.cooldown = 0
     this.organism = organism
@@ -25,12 +25,12 @@ class Mates implements Drive {
     this.mates = mates
   }
 
-  direction = (): p5.Vector | null => {
-    if (!this.state.has(State.Mating)) {
-      return null
+  direction = (): [State, p5.Vector] | null => {
+    if (this.state.has(State.Mating)) {
+      return [State.Mating, this._direction]
     }
 
-    return this._direction
+    return null
   }
 
   update = (): void => {

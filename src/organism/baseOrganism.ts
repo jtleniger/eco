@@ -1,6 +1,6 @@
 import type p5 from 'p5'
 import Sprite from '../sprite'
-import type State from './state'
+import State from './state'
 import Rests from './traits/rests'
 import type Drive from './traits/drive'
 import type World from '../world'
@@ -104,37 +104,48 @@ export default abstract class BaseOrganism extends Sprite implements IOrganism {
   }
 
   move(): void {
-    const dirs = this.drives.map((t) => t.direction(this.state)).filter((d) => d !== null)
-
-    if (dirs.length > 1) {
-      throw Error('received multiple candidate directions')
-    }
-
-    if (dirs.length === 0 || dirs[0] === null || dirs[0] === undefined) {
+    if (this.state.has(State.Resting)) {
       return
     }
 
-    const direction = dirs[0].copy()
+    const dirs = new Map(
+      this.drives
+        .map((d) => d.direction(this.state))
+        .filter((d) => d !== null)
+        .map((d) => d as [State, p5.Vector])
+    )
 
-    if (this.pos.x >= this.sketch.width - 8) {
-      direction.add(-1, 0)
-      direction.normalize()
+    let direction: p5.Vector
+
+    if (dirs.has(State.Mating)) {
+      direction = dirs.get(State.Mating) as p5.Vector
+    } else if (dirs.has(State.Hunting)) {
+      direction = dirs.get(State.Hunting) as p5.Vector
+    } else if (dirs.has(State.None)) {
+      direction = dirs.get(State.None) as p5.Vector
+    } else {
+      throw Error('no valid direction found')
     }
 
-    if (this.pos.y >= this.sketch.height - 8) {
-      direction.add(0, -1)
-      direction.normalize()
-    }
+    // if (this.pos.x >= this.sketch.width - 8) {
+    //   direction.add(-1, 0)
+    //   direction.normalize()
+    // }
 
-    if (this.pos.x <= 8) {
-      direction.add(1, 0)
-      direction.normalize()
-    }
+    // if (this.pos.y >= this.sketch.height - 8) {
+    //   direction.add(0, -1)
+    //   direction.normalize()
+    // }
 
-    if (this.pos.y <= 8) {
-      direction.add(0, 1)
-      direction.normalize()
-    }
+    // if (this.pos.x <= 8) {
+    //   direction.add(1, 0)
+    //   direction.normalize()
+    // }
+
+    // if (this.pos.y <= 8) {
+    //   direction.add(0, 1)
+    //   direction.normalize()
+    // }
 
     direction.setMag(this.world.speed.current)
 

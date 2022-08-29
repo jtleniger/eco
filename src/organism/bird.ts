@@ -21,11 +21,6 @@ export default class Bird extends BaseOrganism {
     )
   }
 
-  update(): void {
-    console.log(this.state)
-    super.update()
-  }
-
   die = (reason: string): void => {
     // this.world.kill(this, reason)
   }
