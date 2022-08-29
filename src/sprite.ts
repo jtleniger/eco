@@ -35,6 +35,12 @@ abstract class Sprite {
     this.sketch.image(this.img, 0, 0, width, height)
     this.sketch.pop()
   }
+
+  near(point: p5.Vector): boolean {
+    const dist = this.pos.dist(point)
+
+    return dist < 16
+  }
 }
 
 export default Sprite

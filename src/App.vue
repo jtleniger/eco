@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref, type Ref } from 'vue'
 import World from './world'
 import p5 from 'p5'
 import Statistics from './components/Statistics.vue'
@@ -9,6 +9,7 @@ import GeneticsEditor from './components/GeneticsEditor.vue'
 import { OrganismType } from './organism/organismType'
 import { DNA } from './organism/genetics/dna'
 import EditButtons from './components/EditButtons.vue'
+import type Organism from './organism/organism'
 
 let world: World
 let stats = reactive(new Stats())
@@ -16,6 +17,8 @@ let sketch: p5
 let running = ref(false)
 let showGenetics = ref(false)
 let editingOrganism = ref(OrganismType.Frog)
+let inspectedStats: Ref<[string, number][] | undefined> = ref(undefined)
+let inspected: Organism | null = null
 
 const toggleRunning = () => {
   running.value = !running.value
@@ -72,11 +75,21 @@ onMounted(() => {
       s.background('#9A6348')
       world.draw()
 
-      if (!world.speed.running) {
-        return
-      }
+      inspectedStats.value = inspected?.stats
 
-      world.update()
+      if (world.speed.running) {
+        world.update()
+      }
+    }
+
+    s.mouseClicked = (): void => {
+      const loc = s.createVector(s.mouseX, s.mouseY)
+      for (let o of world.allOrganisms) {
+        if (o.near(loc)) {
+          inspected = o
+          break
+        }
+      }
     }
   }, document.getElementById('simulator') ?? document.body)
 })
@@ -97,7 +110,9 @@ onMounted(() => {
     <section class="right"></section>
     <section class="top"></section>
     <section id="simulator" class="simulator"></section>
-    <section class="bottom"><Statistics :stats="stats"></Statistics></section>
+    <section class="bottom">
+      <Statistics :stats="stats" :inspected="inspectedStats"></Statistics>
+    </section>
   </main>
 </template>
 
@@ -152,6 +167,7 @@ main {
 
 .bottom {
   grid-row: 3 / span 1;
+  display: flex;
 }
 
 .simulator {

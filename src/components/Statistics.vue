@@ -3,15 +3,23 @@ import type Stats from '@/stats'
 
 const props = defineProps<{
   stats: Stats
+  inspected: [string, number][] | undefined
 }>()
 </script>
 
 <template>
   <section>
     <h1>statistics</h1>
-    <div class="statistics">
+    <div class="data">
       <div v-for="[v, k] in stats.iterator">{{ v }}: {{ k }}</div>
     </div>
+  </section>
+  <section>
+    <h1>inspect</h1>
+    <div v-if="inspected" class="data">
+      <div v-for="[v, k] in inspected">{{ v }}: {{ k }}</div>
+    </div>
+    <div v-else class="data">click an organism for info</div>
   </section>
 </template>
 
@@ -30,7 +38,7 @@ h1 {
   grid-row: 1 / span 1;
 }
 
-.statistics {
+.data {
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;

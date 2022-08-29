@@ -7,7 +7,7 @@ import Frog from './organism/frog'
 import Speed from './speed'
 import type Stats from './stats'
 import { Clock } from './utilities'
-import type Edible from './edible'
+import type Organism from './organism/organism'
 
 class World {
   private static readonly MAX_FOOD: number = 50
@@ -30,6 +30,10 @@ class World {
     this.sketch = sketch
     this.foodClock = new Clock(this.speed, this.growFood.bind(this), 0.4)
     this.stats = stats
+  }
+
+  get allOrganisms(): Organism[] {
+    return [...this.frogs, ...this.birds]
   }
 
   initBugs(): void {

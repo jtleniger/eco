@@ -99,9 +99,7 @@ class Mates<Food extends Edible> implements Drive {
 
     const m = this.nearbyMate
 
-    const dist = this.pos.dist(m.pos)
-
-    if (dist < 16) {
+    if (this.organism.near(m.pos)) {
       this.state.delete(State.Available)
       m.state.delete(State.Available)
 

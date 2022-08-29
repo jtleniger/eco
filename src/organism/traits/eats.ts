@@ -90,9 +90,7 @@ class Eats<Food extends Edible> implements Drive {
       return
     }
 
-    const dist = this.pos.dist(this.nearbyFood.pos)
-
-    if (dist < 16) {
+    if (this.organism.near(this.nearbyFood.pos)) {
       this.eat()
       this.end()
     }
