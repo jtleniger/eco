@@ -9,13 +9,14 @@ import Eats from './traits/eats'
 import Mates from './traits/mates'
 import type IOrganism from './iOrganism'
 import Health from './traits/health'
-import type Edible from '@/iEdible'
 import type Bug from '@/bug'
-import { OrganismType } from './organismType'
+import type { OrganismType } from './organismType'
+import type IEdible from '@/iEdible'
 
-class Frog extends Sprite implements IOrganism, Edible {
+export default abstract class BaseOrganism extends Sprite implements IOrganism {
+  abstract die: (reason: string) => void
+
   scale: number = 2
-  rotation: number = 0
 
   world: World
   state: Set<State> = new Set()
@@ -24,20 +25,30 @@ class Frog extends Sprite implements IOrganism, Edible {
   mates: Mates
   rests: Rests
   eats: Eats
-  readonly eaten: boolean = false
 
   readonly generation: number = 1
 
-  private readonly drives: Drive[]
+  readonly drives: Drive[]
 
-  constructor(sketch: p5, world: World, pos: p5.Vector, dna?: DNA, generation?: number) {
-    super('assets/frog.png', sketch, pos)
+  constructor(
+    imgPath: string,
+    sketch: p5,
+    world: World,
+    pos: p5.Vector,
+    type: OrganismType,
+    food: IEdible[],
+    mates: IOrganism[],
+    dna?: DNA,
+    generation?: number
+  ) {
+    super(imgPath, sketch, pos)
+
     this.world = world
 
     if (dna !== undefined) {
       this.dna = dna
     } else {
-      this.dna = DNA.Default(OrganismType.Frog, this.world)
+      this.dna = DNA.Default(type, this.world)
     }
 
     if (generation !== undefined) {
@@ -47,8 +58,8 @@ class Frog extends Sprite implements IOrganism, Edible {
     this.health = new Health(this)
 
     this.rests = new Rests(this)
-    this.eats = new Eats(this, this.world.bugs)
-    this.mates = new Mates(this, this.world.frogs)
+    this.eats = new Eats(this, food)
+    this.mates = new Mates(this, mates)
 
     this.drives = [this.rests, this.eats, this.mates]
   }
@@ -65,14 +76,6 @@ class Frog extends Sprite implements IOrganism, Edible {
     }
 
     this.move()
-  }
-
-  eat = (): void => {
-    this.die('eaten')
-  }
-
-  die(reason: string): void {
-    this.world.kill(this, reason)
   }
 
   get stats(): [string, number][] {
@@ -142,5 +145,3 @@ class Frog extends Sprite implements IOrganism, Edible {
     this.pos.y = this.sketch.constrain(this.pos.y, 0, this.sketch.height)
   }
 }
-
-export default Frog

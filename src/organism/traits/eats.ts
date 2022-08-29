@@ -1,26 +1,26 @@
-import type Edible from '@/edible'
+import type IEdible from '@/iEdible'
 import type p5 from 'p5'
 import { Clock } from '../../utilities'
 import type World from '../../world'
 import { GeneType } from '../genetics/genes/geneType'
-import type Organism from '../organism'
+import type IOrganism from '../iOrganism'
 import State from '../state'
 import type Drive from './drive'
 
-class Eats<Food extends Edible> implements Drive {
+class Eats implements Drive {
   private readonly world: World
   private readonly pos: p5.Vector
   private readonly state: Set<State>
-  private readonly organism: Organism
+  private readonly organism: IOrganism
   private readonly clock: Clock
-  private readonly food: Food[]
+  private readonly food: IEdible[]
 
   fed: number
 
-  private nearbyFood: Food | null = null
+  private nearbyFood: IEdible | null = null
   private _direction: p5.Vector | null = null
 
-  constructor(organism: Organism, food: Food[]) {
+  constructor(organism: IOrganism, food: IEdible[]) {
     this.organism = organism
     this.pos = this.organism.pos
     this._direction = null
@@ -110,7 +110,7 @@ class Eats<Food extends Edible> implements Drive {
     }
   }
 
-  private nearestFood(): Food | null {
+  private nearestFood(): IEdible | null {
     let minDistance = Infinity
     let food = null
 

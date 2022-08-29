@@ -1,22 +1,15 @@
 import type p5 from 'p5'
-import type Edible from './edible'
+import type IEdible from './iEdible'
 
 import Sprite from './sprite'
 import { RandomInt, RandomSketchPos } from './utilities'
 
-class Bug extends Sprite implements Edible {
-  get imgPath(): string {
-    return 'assets/food.png'
-  }
-
+class Bug extends Sprite implements IEdible {
   scale: number = 1
-
   eaten: boolean = false
 
-  rotation: number
-
   constructor(sketch: p5) {
-    super(sketch, RandomSketchPos(sketch))
+    super('assets/food.png', sketch, RandomSketchPos(sketch))
     this.eaten = false
     this.reset()
     this.rotation = this.sketch.radians(RandomInt(0, 359))

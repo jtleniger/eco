@@ -4,13 +4,14 @@ abstract class Sprite {
   img: p5.Image | null = null
   sketch: p5
   pos: p5.Vector
-  abstract get imgPath(): string
+  imgPath: string
+  rotation: number = 0
   abstract scale: number
-  abstract rotation: number
 
-  constructor(sketch: p5, pos: p5.Vector) {
+  constructor(imgPath: string, sketch: p5, pos: p5.Vector) {
     this.sketch = sketch
     this.pos = pos
+    this.imgPath = imgPath
     this.loadImage()
   }
 

@@ -9,7 +9,7 @@ import GeneticsEditor from './components/GeneticsEditor.vue'
 import { OrganismType } from './organism/organismType'
 import { DNA } from './organism/genetics/dna'
 import EditButtons from './components/EditButtons.vue'
-import type Organism from './organism/organism'
+import type IOrganism from './organism/iOrganism'
 
 let world: World
 let stats = reactive(new Stats())
@@ -18,7 +18,7 @@ let running = ref(false)
 let showGenetics = ref(false)
 let editingOrganism = ref(OrganismType.Frog)
 let inspectedStats: Ref<[string, number][] | undefined> = ref(undefined)
-let inspected: Organism | null = null
+let inspected: IOrganism | null = null
 
 const toggleRunning = () => {
   running.value = !running.value

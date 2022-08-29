@@ -1,23 +1,24 @@
 import p5 from 'p5'
 import { Clock } from '../../utilities'
 import { GeneType } from '../genetics/genes/geneType'
-import type Organism from '../organism'
+import type IOrganism from '../iOrganism'
 import State from '../state'
 import type Drive from './drive'
 
 class Rests implements Drive {
-  private readonly organism: Organism
+  private readonly organism: IOrganism
   private readonly state: Set<State>
 
-  private energy: number = 0
+  private energy: number
   private _direction: p5.Vector | null
   private remaining: number
   private readonly restClock: Clock
   private readonly energyClock: Clock
 
-  constructor(organism: Organism) {
+  constructor(organism: IOrganism) {
     this._direction = null
     this.organism = organism
+    this.energy = this.organism.dna.getValue(GeneType.MaxEnergy)
     this.state = this.organism.state
     this.remaining = this.organism.dna.getValue(GeneType.RestTime)
     this.restClock = new Clock(this.organism.world.speed, this.decRest.bind(this))

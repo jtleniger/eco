@@ -1,17 +1,17 @@
 import { Clock } from '../../utilities'
 import type World from '../../world'
 import { GeneType } from '../genetics/genes/geneType'
-import type Organism from '../organism'
+import type IOrganism from '../iOrganism'
 
 class Health {
   age: number = 0
   starvation: number = 0
 
-  private readonly organism: Organism
+  private readonly organism: IOrganism
   private readonly world: World
   private readonly clock: Clock
 
-  constructor(organism: Organism) {
+  constructor(organism: IOrganism) {
     this.organism = organism
     this.world = this.organism.world
     this.clock = new Clock(this.world.speed, this.incAge.bind(this))

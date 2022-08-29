@@ -7,7 +7,7 @@ import Frog from './organism/frog'
 import Speed from './speed'
 import type Stats from './stats'
 import { Clock } from './utilities'
-import type Organism from './organism/organism'
+import type IOrganism from './organism/iOrganism'
 
 class World {
   private static readonly MAX_FOOD: number = 50
@@ -32,7 +32,7 @@ class World {
     this.stats = stats
   }
 
-  get allOrganisms(): Organism[] {
+  get allOrganisms(): IOrganism[] {
     return [...this.frogs, ...this.birds]
   }
 

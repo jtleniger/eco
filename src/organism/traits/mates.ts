@@ -1,23 +1,21 @@
-import type Edible from '@/edible'
 import type p5 from 'p5'
 import type World from '../../world'
-import type MatesAndEats from '../matesAndEats'
 import { GeneType } from '../genetics/genes/geneType'
-import type Organism from '../organism'
+import type IOrganism from '../iOrganism'
 import State from '../state'
 import type Drive from './drive'
 
-class Mates<Food extends Edible> implements Drive {
+class Mates implements Drive {
   private readonly pos: p5.Vector
   private readonly world: World
   private readonly state: Set<State>
-  private readonly organism: MatesAndEats<Food>
-  private readonly mates: MatesAndEats<Food>[]
+  private readonly organism: IOrganism
+  private readonly mates: IOrganism[]
   private _direction: p5.Vector | null
-  private nearbyMate: MatesAndEats<Food> | null = null
+  private nearbyMate: IOrganism | null = null
   private cooldown: number
 
-  constructor(organism: MatesAndEats<Food>, mates: MatesAndEats<Food>[]) {
+  constructor(organism: IOrganism, mates: IOrganism[]) {
     this.pos = organism.pos
     this._direction = null
     this.state = organism.state
@@ -120,7 +118,7 @@ class Mates<Food extends Edible> implements Drive {
     this._direction = this.nearbyMate.pos.copy().sub(this.pos).normalize()
   }
 
-  private nearestMate(): MatesAndEats<Food> | null {
+  private nearestMate(): IOrganism | null {
     let minDistance = Infinity
     let creature = null
 

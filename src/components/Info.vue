@@ -3,7 +3,7 @@ import type Stats from '@/stats'
 
 const props = defineProps<{
   stats: Stats
-  inspected: [string, number][] | undefined
+  inspected?: [string, number][]
 }>()
 </script>
 
