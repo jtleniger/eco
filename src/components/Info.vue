@@ -25,26 +25,20 @@ const props = defineProps<{
 
 <style scoped>
 section {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
   margin-right: 2em;
 }
 
 h1 {
   font-weight: normal;
   margin: 0;
-  grid-column: 1 / span 1;
-  grid-row: 1 / span 1;
 }
 
 .data {
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  grid-column: 1 / span 1;
-  grid-row: 2 / span 1;
   min-height: 0;
+  max-height: 60%;
 }
 
 .data div {

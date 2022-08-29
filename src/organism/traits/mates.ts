@@ -36,14 +36,14 @@ class Mates implements Drive {
   update = (): void => {
     if (this.cooldown >= this.organism.dna.getValue(GeneType.MateCooldown)) {
       this.state.add(State.Available)
+    } else {
+      this.cooldown++
     }
 
     if (this.state.has(State.Mating) && this.nearbyMate !== null) {
       this.tryMate()
       return
     }
-
-    this.cooldown++
 
     const fedPercentage = Math.round(
       (this.organism.eats.fed / this.organism.dna.getValue(GeneType.Full)) * 100
@@ -106,7 +106,7 @@ class Mates implements Drive {
       this.organism.rests.start()
       m.rests.start()
 
-      this.world.addPrey(
+      this.world.addFrog(
         this.pos.copy(),
         this.organism.dna.mix(m.dna),
         this.organism.generation + 1

@@ -33,7 +33,7 @@ class World {
   }
 
   get allOrganisms(): IOrganism[] {
-    return [...this.frogs]
+    return [...this.frogs, ...this.birds]
   }
 
   initBugs(): void {
@@ -66,7 +66,7 @@ class World {
         this.sketch.random(this.sketch.height)
       )
 
-      this.addPrey(pos, this.userDna.get(OrganismType.Frog))
+      this.addFrog(pos, this.userDna.get(OrganismType.Frog))
     }
   }
 
@@ -77,16 +77,16 @@ class World {
         this.sketch.random(this.sketch.height)
       )
 
-      this.addPredator(pos, this.userDna.get(OrganismType.Bird))
+      this.addBird(pos, this.userDna.get(OrganismType.Bird))
     }
   }
 
-  addPrey(pos: p5.Vector, dna?: DNA, generation?: number): void {
+  addFrog(pos: p5.Vector, dna?: DNA, generation?: number): void {
     this.frogs.push(new Frog(this.sketch, this, pos, dna, generation))
     this.stats.increment('born')
   }
 
-  addPredator(pos: p5.Vector, dna?: DNA, generation?: number): void {
+  addBird(pos: p5.Vector, dna?: DNA, generation?: number): void {
     this.birds.push(new Bird(this.sketch, this, pos, dna, generation))
     this.stats.increment('born')
   }

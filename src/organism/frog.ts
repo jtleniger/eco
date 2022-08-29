@@ -24,6 +24,7 @@ export default class Frog extends BaseOrganism implements IEdible {
   }
 
   eat = (): void => {
+    this.eaten = true
     this.die('eaten')
   }
 
