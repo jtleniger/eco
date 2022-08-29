@@ -81,6 +81,7 @@ class Frog extends Sprite implements Organism, Edible {
 
   get stats(): [string, number][] {
     return [
+      ...this.dna.stats,
       ...this.eats.stats,
       ...this.health.stats,
       ...this.rests.stats,

@@ -76,6 +76,7 @@ class Bird extends Sprite implements MatesAndEats<Frog> {
 
   get stats(): [string, number][] {
     return [
+      ...this.dna.stats,
       ...this.eats.stats,
       ...this.health.stats,
       ...this.rests.stats,

@@ -34,6 +34,17 @@ export class DNA {
     return new DNA(newGenes)
   }
 
+  get stats(): [string, number][] {
+    const ret: [string, number][] = []
+
+    this.genes.forEach((v, k) => {
+      const name = GeneName.get(k) as string
+      ret.push([name, v.value])
+    })
+
+    return ret
+  }
+
   toString(): string {
     let res = ''
 

@@ -2,7 +2,7 @@
 import { onMounted, reactive, ref, type Ref } from 'vue'
 import World from './world'
 import p5 from 'p5'
-import Statistics from './components/Statistics.vue'
+import Info from './components/Info.vue'
 import Stats from './stats'
 import Controls from './components/Controls.vue'
 import GeneticsEditor from './components/GeneticsEditor.vue'
@@ -111,7 +111,7 @@ onMounted(() => {
     <section class="top"></section>
     <section id="simulator" class="simulator"></section>
     <section class="bottom">
-      <Statistics :stats="stats" :inspected="inspectedStats"></Statistics>
+      <Info :stats="stats" :inspected="inspectedStats"></Info>
     </section>
   </main>
 </template>

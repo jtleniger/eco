@@ -1,3 +1,3 @@
 - handle different behavior at different screen sizes
-- inspector
+- bounce logic isn't right
 - intial spawn counts

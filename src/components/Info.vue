@@ -19,16 +19,16 @@ const props = defineProps<{
     <div v-if="inspected" class="data">
       <div v-for="[v, k] in inspected">{{ v }}: {{ k }}</div>
     </div>
-    <div v-else class="data">click an organism for info</div>
+    <div v-else class="data"><em>click an organism for info</em></div>
   </section>
 </template>
 
 <style scoped>
 section {
-  display: grid;
-  grid-template-rows: 25px 1fr;
-  grid-template-columns: repeat(5, 1fr);
+  display: flex;
+  flex-direction: column;
   height: 100%;
+  margin-right: 2em;
 }
 
 h1 {
@@ -45,5 +45,9 @@ h1 {
   grid-column: 1 / span 1;
   grid-row: 2 / span 1;
   min-height: 0;
+}
+
+.data div {
+  margin-right: 1em;
 }
 </style>
