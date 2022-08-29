@@ -1,8 +1,6 @@
 import type p5 from 'p5'
-import type State from './state'
 import type World from '../world'
 import type { DNA } from './genetics/dna'
-import Mates from './traits/mates'
 import { OrganismType } from './organismType'
 import BaseOrganism from './baseOrganism'
 

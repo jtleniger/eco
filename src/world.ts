@@ -2,8 +2,8 @@ import type p5 from 'p5'
 import Bug from './bug'
 import type { DNA } from './organism/genetics/dna'
 import { OrganismType } from './organism/organismType'
-import Bird from './organism/bird'
 import Frog from './organism/frog'
+import Bird from './organism/bird'
 import Speed from './speed'
 import type Stats from './stats'
 import { Clock } from './utilities'
@@ -33,7 +33,7 @@ class World {
   }
 
   get allOrganisms(): IOrganism[] {
-    return [...this.frogs, ...this.birds]
+    return [...this.frogs]
   }
 
   initBugs(): void {

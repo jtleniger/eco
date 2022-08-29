@@ -9,7 +9,6 @@ import Eats from './traits/eats'
 import Mates from './traits/mates'
 import type IOrganism from './iOrganism'
 import Health from './traits/health'
-import type Bug from '@/bug'
 import type { OrganismType } from './organismType'
 import type IEdible from '@/iEdible'
 
